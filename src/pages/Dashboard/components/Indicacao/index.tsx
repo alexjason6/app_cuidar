@@ -11,7 +11,7 @@ import { Container, Text } from "./styles";
 
 export default function Indicacao({title, description}) {
   const {user} = useContext(AuthContext);
-  const [dadosVeiculo] = user.veiculos.filter(item => item.codigo_situacao === '1');
+  const [dadosVeiculo] = user.veiculos.filter(item => item.id_situacao === 1);
   const [telefoneAmigo, setTelefoneAmigo] = useState('');
   const [nomeAmigo, setNomeAmigo] = useState('');
 
@@ -19,8 +19,8 @@ export default function Indicacao({title, description}) {
 
     if (!nomeAmigo) {
       Alert.alert('Atenção', 'Preencha o nome do seu amigo para continuar.');
-    } 
-    
+    }
+
     if (telefoneAmigo.length < 12) {
       Alert.alert('Atenção', 'Preencha o telefone corretamente para continuar.');
     }
@@ -30,7 +30,7 @@ export default function Indicacao({title, description}) {
         await sendIndicacao({user: {nome: user.nome, cpf: user.cpf, telefone_fixo: user.telefone_fixo, telefone_celular: user.telefone_celular, veiculos: dadosVeiculo}, nomeAmigo, telefoneAmigo})
         .then(() => {
           Alert.alert(
-            'Sucesso!', 
+            'Sucesso!',
             'Mensagem enviada com sucesso.'
           );
           setNomeAmigo('');
@@ -41,7 +41,7 @@ export default function Indicacao({title, description}) {
           'Algo deu errado.',
           'Houve um erro no envio da mensagem. Por favor, tente novamente.',
         );
-      }  
+      }
     }
   }
 

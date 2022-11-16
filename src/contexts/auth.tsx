@@ -53,7 +53,7 @@ interface AuthContextData {
         "placa": "AAA-111",
         "chassi": "999999999999",
         "valor_fixo" : 99.99,
-        "codigo_situacao": '1',
+        "id_situacao": 1,
         "situacao": 'ativo',
         "descricao_modelo": 'modelo'
       }
@@ -381,7 +381,7 @@ export const AuthProvider: React.FC = ({children}) => {
     .then((response) => {
       if (response.codigo_situacao === Number(2)) {
         Alert.alert(
-          'Acesso negado.', 
+          'Acesso negado.',
           'Associado inativo no sistema. Por favor, entre em contato com a CUIDAR.',
           [{
             text: 'Chamar no WhatsApp',
@@ -396,7 +396,7 @@ export const AuthProvider: React.FC = ({children}) => {
 
       if (response.codigo_situacao === Number(3)) {
         Alert.alert(
-          'Acesso negado.', 
+          'Acesso negado.',
           'Contrato pendente de ativação. Por favor, entre em contato com a CUIDAR.',
           [{
             text: 'Chamar no WhatsApp',
@@ -411,7 +411,7 @@ export const AuthProvider: React.FC = ({children}) => {
 
       if (response.codigo_situacao === Number(4)) {
         Alert.alert(
-          'Acesso negado.', 
+          'Acesso negado.',
           'Por favor entre em contato comm a CUIDAR para regularizar a situação.',
           [{
             text: 'Chamar no WhatsApp',
@@ -423,7 +423,7 @@ export const AuthProvider: React.FC = ({children}) => {
           }],
         );
       }
-      
+
       if (response.codigo_situacao === Number(1)) {
         setUser(response);
         setLoading(false);
@@ -461,7 +461,7 @@ export const AuthProvider: React.FC = ({children}) => {
     .catch(() => console.log('error envio dados firestore'));
     setLoading(false);
   }
-  
+
   useEffect(() => {
     function VerificaInternet() {
       NetInfo.fetch().then(state => {
