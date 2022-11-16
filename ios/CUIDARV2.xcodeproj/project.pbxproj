@@ -509,6 +509,8 @@
 				DEVELOPMENT_TEAM = BN6DYA5S2L;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = CUIDARV2/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Cuidar Proteção";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -538,6 +540,8 @@
 				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = BN6DYA5S2L;
 				INFOPLIST_FILE = CUIDARV2/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Cuidar Proteção";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
