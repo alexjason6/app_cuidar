@@ -250,7 +250,7 @@ render.experimental.xml
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
-GoogleService-info.plist
+ios/GoogleService-info.plist
 
 # Android Profiling
 *.hprof
