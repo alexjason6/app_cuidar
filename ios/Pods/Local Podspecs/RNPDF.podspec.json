@@ -1,0 +1,25 @@
+{
+  "name": "RNPDF",
+  "version": "0.13.2",
+  "summary": "React native Pdf viewer implementation",
+  "authors": "Maksym Rusynyk <m.rusynyk@gmail.com>, Sander Frenken <sander.frenken@hotmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/rumax/react-native-PDFView#readme",
+  "source": {
+    "git": "https://github.com/rumax/react-native-PDFView.git",
+    "tag": "v0.13.2"
+  },
+  "platforms": {
+    "ios": "7.0"
+  },
+  "preserve_paths": "*.js",
+  "dependencies": {
+    "React": [
+
+    ]
+  },
+  "source_files": "ReactNativeViewPDF/*.{h,m}",
+  "public_header_files": [
+    "ReactNativeViewPDF/*.h"
+  ]
+}
