@@ -31,6 +31,6 @@
         android:resource="@drawable/ic_notification" />
       <meta-data
       android:name="com.google.android.geo.API_KEY"
-      android:value="AIzaSyCZCkTIz2Vh3Q4mJOGRVO3DKASZD3VEuNw"/>
+      android:value="XXX"/>
     </application>
 </manifest>
