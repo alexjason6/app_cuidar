@@ -247,12 +247,10 @@ render.experimental.xml
 # Keystore files
 *.jks
 *.keystore
-*.pem
-*.old
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
-.ios/GoogleService-Info.plist
+GoogleService-Info.plist
 
 # Android Profiling
 *.hprof
