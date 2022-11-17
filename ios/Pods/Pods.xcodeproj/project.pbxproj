@@ -29376,6 +29376,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 544CCD0BC6CB1938CBD627ED788CE2FD /* RNImageCropPicker.release.xcconfig */;
 			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/RNImageCropPicker";
 				IBSC_MODULE = RNImageCropPicker;
 				INFOPLIST_FILE = "Target Support Files/RNImageCropPicker/ResourceBundle-QBImagePicker-RNImageCropPicker-Info.plist";
@@ -29486,6 +29487,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 237CDE9EC4B384EC3FE335F428F9E4DA /* RNImageCropPicker.debug.xcconfig */;
 			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/RNImageCropPicker";
 				IBSC_MODULE = RNImageCropPicker;
 				INFOPLIST_FILE = "Target Support Files/RNImageCropPicker/ResourceBundle-QBImagePicker-RNImageCropPicker-Info.plist";
@@ -29769,6 +29771,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 88587908E9989ED32EF2F596C8DC4969 /* React-Core.release.xcconfig */;
 			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/React-Core";
 				IBSC_MODULE = React;
 				INFOPLIST_FILE = "Target Support Files/React-Core/ResourceBundle-AccessibilityResources-React-Core-Info.plist";
@@ -30108,6 +30111,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 352C9E878520297F79C6FEC4B9370436 /* React-Core.debug.xcconfig */;
 			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/React-Core";
 				IBSC_MODULE = React;
 				INFOPLIST_FILE = "Target Support Files/React-Core/ResourceBundle-AccessibilityResources-React-Core-Info.plist";
@@ -30642,6 +30646,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8B3767A9C2124F72DD725FF7BF22F2B4 /* gRPC-C++.release.xcconfig */;
 			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/gRPC-C++";
 				IBSC_MODULE = grpcpp;
 				INFOPLIST_FILE = "Target Support Files/gRPC-C++/ResourceBundle-gRPCCertificates-Cpp-gRPC-C++-Info.plist";
@@ -31963,6 +31968,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 98A3E0FB8DC321D113DC495764AA7690 /* TOCropViewController.release.xcconfig */;
 			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/TOCropViewController";
 				IBSC_MODULE = TOCropViewController;
 				INFOPLIST_FILE = "Target Support Files/TOCropViewController/ResourceBundle-TOCropViewControllerBundle-TOCropViewController-Info.plist";
@@ -32810,6 +32816,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A76F36623BEB24C469BC809858DBD180 /* gRPC-C++.debug.xcconfig */;
 			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/gRPC-C++";
 				IBSC_MODULE = grpcpp;
 				INFOPLIST_FILE = "Target Support Files/gRPC-C++/ResourceBundle-gRPCCertificates-Cpp-gRPC-C++-Info.plist";
@@ -32866,6 +32873,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7D14C093C9C048E5C958673117246470 /* TOCropViewController.debug.xcconfig */;
 			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/TOCropViewController";
 				IBSC_MODULE = TOCropViewController;
 				INFOPLIST_FILE = "Target Support Files/TOCropViewController/ResourceBundle-TOCropViewControllerBundle-TOCropViewController-Info.plist";

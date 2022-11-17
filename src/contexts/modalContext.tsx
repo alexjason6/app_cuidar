@@ -11,8 +11,8 @@ interface ModalContextData {
 
 const ModalContext = createContext<ModalContextData>({} as ModalContextData);
 
-export const ModalProvider: React.FC = ({children}) => {
-  const [modal, setModal] = useState({modalName: '', active: false, device: 999});
+export const ModalProvider: React.FC = ({ children }) => {
+  const [modal, setModal] = useState({modalName: '', active: false, device: 0});
 
   async function changeModal(dadosModal: {modalName: string, active: boolean, device: number}) {
     setModal(dadosModal);

@@ -26,7 +26,7 @@ interface AuthContextData {
     "cnh": "999999999999",
     "categoria_cnh": "A",
     "data_vencimento_habilitacao": "yyyy-mm-dd",
-    "cpf": "999.999.999-99",
+    "cpf": "99999999999",
     "telefone_fixo": "(99)9999-9999",
     "telefone_celular": "(99)99999-9999",
     "telefone_celular_aux": "(99)99999-9999",
@@ -53,7 +53,7 @@ interface AuthContextData {
         "placa": "AAA-111",
         "chassi": "999999999999",
         "valor_fixo" : 99.99,
-        "id_situacao": 1,
+        "codigo_situacao": '1',
         "situacao": 'ativo',
         "descricao_modelo": 'modelo'
       }
@@ -295,7 +295,6 @@ export const AuthProvider: React.FC = ({children}) => {
   async function refreshToken() {
     await HinovaService.signIn({body: { usuario: accessData.login, senha: accessData.senha, token: accessData.tokenHinova }})
     .then((response) => {
-      console.log(response);
       setTokenAssociadoHinova(response.token_usuario);
     })
   }
@@ -305,7 +304,6 @@ export const AuthProvider: React.FC = ({children}) => {
 
     await HinovaService.getAssociado({token: tokenAssociadoHinova, cpfCnpj: cpfCnpj})
     .then((response) => {
-      console.log('Passou aqui', response);
       setUser(response)
     })
   }

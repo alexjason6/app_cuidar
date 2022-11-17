@@ -1,15 +1,9 @@
-import {StyleSheet, Dimensions} from 'react-native';
+import styled from 'styled-components/native';
 
-const width100 = Dimensions.get('screen').width;
-const height = Dimensions.get('window').height;
-const cinzaClaro = '#eeeeee';
-
-export default StyleSheet.create({
-  container: {
-    display: 'flex',
-    flex: 1,
-    height: '100%',
-    marginTop: height * 0.35,
-    backgroundColor: cinzaClaro,
-  },
-})
+export const Container = styled.View`
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  justify-content: center;
+  align-items: center;
+`;

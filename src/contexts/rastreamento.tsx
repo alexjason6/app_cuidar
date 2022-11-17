@@ -8,6 +8,7 @@ import SmartService from '../services/SmartService';
 interface TrackContextData {
   devices: [
     {
+      tail: any;
       lat: number;
       lng: number;
       id: string;
@@ -176,14 +177,12 @@ export const TrackProvider: React.FC = ({children}) => {
   }
 
   async function getDevices() {
-
-     console.log('passou aqui')
     await SmartService.getDevice(tokenAssociadoGPS)
     .then((response) => {
 
       if (response.length === 0) {
         setError(true);
-      } 
+      }
 
       setDevices(response[0].items);
       setError(false);

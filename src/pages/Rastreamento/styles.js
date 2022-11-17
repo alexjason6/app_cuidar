@@ -38,20 +38,3 @@ export const Text = styled.Text`
     font-weight: bold;
   `};
 `;
-
-export const ChangeDevice = styled.TouchableOpacity`
-  width: 40px;
-  height: 40px;
-  background: ${({theme}) => theme.colors.white};
-  border-radius: 25px;
-  align-items: center;
-  justify-content: center;
-
-  ${({plus}) => plus && css`
-    margin-left: auto;
-  `};
-
-  ${({minus}) => minus && css`
-    margin-right: auto;
-  `};
-`;

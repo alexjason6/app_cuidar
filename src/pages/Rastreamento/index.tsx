@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import 'moment/locale/pt-br';
 import moment from 'moment';
-import Icon from 'react-native-vector-icons/Feather';
 
 import TrackContext from '../../contexts/rastreamento';
 import ModalContext from '../../contexts/modalContext';
@@ -24,9 +23,8 @@ import Error from './error';
 import Header from '../../components/Header';
 import Card from './components/Card';
 import { Button } from '../../components/Button';
-import Infos from './components/Infos'
 
-import {Container, Content, View, Text, ChangeDevice} from './styles';
+import {Container, Content, View, Text} from './styles';
 
 export const Rastreamento: React.FC = () => {
   const {devices, error, loading, getDevices, tokenAssociadoGPS} = useContext(TrackContext);
@@ -34,30 +32,11 @@ export const Rastreamento: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [equipamento, setEquipamento] = useState(0);
   const [deviceHistory, setDeviceHistory] = useState([]);
-  const [endereco, setEndereco] = useState('');
-  const trata = deviceHistory.filter((device) => device.items);
-  const trata2 = trata.map((item) => item.items);
-  const tailH = trata2.map((item) => item.map((item) => item));
-  const tailH2 = tailH.flatMap((item) => item);
-  const data = [
-    {data: moment().format('DD-MM-YYYY')},
-    {data: moment().subtract(1, 'days').format('DD-MM-YYYY')},
-    {data: moment().subtract(2, 'days').format('DD-MM-YYYY')},
-    {data: moment().subtract(3, 'days').format('DD-MM-YYYY')},
-    {data: moment().subtract(4, 'days').format('DD-MM-YYYY')},
-    {data: moment().subtract(5, 'days').format('DD-MM-YYYY')},
-    {data: moment().subtract(6, 'days').format('DD-MM-YYYY')}
-  ];
-  const [dataSelected, setDataSelected ] = useState(moment().format('DD-MM-YYYY'));
+  const dataSelected = moment().format('DD-MM-YYYY');
 
   useLayoutEffect(() => {
     getDevices();
-  }, []);
-
-  async function getAddress() {
-    await SmartService.getAddress({latitude: devices[equipamento].lat, longitude: devices[equipamento].lng})
-    .then((response) => setEndereco(response))
-  }
+  }, [])
 
   async function getHistory(index: number) {
     setEquipamento(index);
@@ -65,12 +44,12 @@ export const Rastreamento: React.FC = () => {
 
     await SmartService.getHistory({token: tokenAssociadoGPS, id, dataSelected})
     .then((response) => setDeviceHistory(response.items))
-    .then(() => changeModal({modalName: 'modalHistory', active: true, device: equipamento}))
+    .then(() => changeModal({modalName: 'modalHistory', active: true, device: index}))
     .catch(() => {
       Alert.alert('Atenção!', 'Alguma coisa não saiu como o esperado. Por favor, tente novamente.');
     });
   }
- 
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
 
@@ -85,20 +64,7 @@ export const Rastreamento: React.FC = () => {
     changeModal({modalName: 'modalMap', active: true, device: index})
   }
 
-  async function handleChangeDevice(direction: string) {
-    if (direction === 'minus') {
-      setEquipamento(equipamento - 1);
-      changeModal({modalName: 'modalMap', active: true, device: equipamento - 1});
-    }
-
-    if (direction === 'plus') {
-      setEquipamento(equipamento + 1);
-      changeModal({modalName: 'modalMap', active: true, device: equipamento + 1});
-    }
-  }
-
   useEffect(() => {
-    getAddress();
     setTimeout(() => {
       onRefresh();
     }, 15000);
@@ -150,35 +116,8 @@ export const Rastreamento: React.FC = () => {
           </Card>
         ))}
       </Content>
-      <ModalMap equipamento={devices[equipamento]} visible={modal.modalName === 'modalMap' && modal.active === true ? true : false}>
-        { devices.length > 1 && (
-        <View changeDevice>
-          {equipamento >= 1 &&
-          <ChangeDevice minus onPress={() => handleChangeDevice('minus')}>
-            <Icon name={'arrow-left'} size={28} color={'#0c71c3'} />
-          </ChangeDevice>
-          }
-          {devices.length - 1 === equipamento ? null : (
-          <ChangeDevice plus onPress={() => handleChangeDevice('plus')}>
-            <Icon name={'arrow-right'} size={28} color={'#0c71c3'} />
-          </ChangeDevice>
-          )}
-        </View>
-        )}
-
-        <Infos
-          deviceName={devices[equipamento].name.split(' ')[0]}
-          colorIconDevice={devices[equipamento].online === 'online' ? '#ff9800' : '#cccccc'}
-          ignition={devices[equipamento].online === 'online' ? 'Ligado' : 'Desligado'}
-          colorIconIgnition={devices[equipamento].online === 'online' ? '#0c71c3' : '#cccccc'}
-          speed={`${devices[equipamento].speed} km/h`}
-          timeStoped={devices[equipamento].stop_duration}
-          address={endereco}
-          refreshAt={moment.unix(devices[equipamento].timestamp).locale('pt-br').fromNow()}
-        />
-      </ModalMap>
-
-      <ModalHistory equipamento={devices[equipamento]} visible={modal.modalName === 'modalHistory' && modal.active === true ? true : false} historico={deviceHistory} />
+      <ModalMap visible={modal.modalName === 'modalMap' && modal.active === true ? true : false} />
+      <ModalHistory visible={modal.modalName === 'modalHistory' && modal.active === true ? true : false} historico={deviceHistory} />
     </Container>
   );
 };

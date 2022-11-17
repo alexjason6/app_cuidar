@@ -11,7 +11,7 @@ import { Container, Text } from "./styles";
 
 export default function Indicacao({title, description}) {
   const {user} = useContext(AuthContext);
-  const [dadosVeiculo] = user.veiculos.filter(item => item.id_situacao === 1);
+  const [dadosVeiculo] = user.veiculos.filter(item => item.codigo_situacao === '1');
   const [telefoneAmigo, setTelefoneAmigo] = useState('');
   const [nomeAmigo, setNomeAmigo] = useState('');
 
