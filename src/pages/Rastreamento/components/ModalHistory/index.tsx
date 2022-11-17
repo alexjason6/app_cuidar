@@ -98,7 +98,7 @@ export default function ModalHistory({ visible, historico }) {
     <View infos>
       <Text>{enderecoInicial}</Text>
       <Text>{enderecoFinal}</Text>
-        {viagem !== viagemTotal &&
+        {viagem !== viagemTotal -1 &&
           <ChangeViagem onPress={() => setViagem(viagem + 1)}>
             <Text>Proxima viagem</Text>
           </ChangeViagem>
