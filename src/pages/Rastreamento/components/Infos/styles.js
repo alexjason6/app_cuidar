@@ -49,6 +49,10 @@ export const Text = styled.Text`
     color: ${({theme}) => theme.colors.alert.main};
   `};
 
+  ${({ignition}) => ignition && css`
+    color: ${({theme}) => theme.colors.grays.light};
+  `};
+
   ${({stoped}) => stoped && css`
     font-size: 12px;
     color: ${({theme}) => theme.colors.blues.main};

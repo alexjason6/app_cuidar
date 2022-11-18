@@ -43,10 +43,21 @@ class HinovaService {
   async updateAssociado(data: {token: string, body: {}}) {
     this.headers['Authorization'] = `Bearer ${data.token}`;
 
-    const response = await fetch('https://api.hinova.com.br/api/sga/v2/alterar/associado', {
+    const response = await fetch(`${this.baseURL}/alterar/associado`, {
       method: 'POST',
       headers: this.headers,
       body: JSON.stringify(data.body)
+    });
+
+    return response.json();
+  }
+
+  async updateSituacaoAssociado(data: {token: string, situacao: number, codigo_associado: number}) {
+    this.headers['Authorization'] = `Bearer ${data.token}`;
+
+    const response = await fetch(`${this.baseURL}/associado/alterar-situacao-para/${data.situacao}/${data.codigo_associado}`, {
+      method: 'GET',
+      headers: this.headers,
     });
 
     return response.json();
@@ -67,7 +78,7 @@ class HinovaService {
   async getBoletos(data: {token: string, body:{}}) {
     this.headers['Authorization'] = `Bearer ${data.token}`;
 
-    const response = await fetch('https://api.hinova.com.br/api/sga/v2/listar/boleto-associado-veiculo',{
+    const response = await fetch(`${this.baseURL}/listar/boleto-associado-veiculo`,{
       method: 'POST',
       body: JSON.stringify(data.body),
       headers: this.headers,
@@ -79,7 +90,7 @@ class HinovaService {
   async getPdfBoleto(data: {token: string, nossoNumero: number}) {
     this.headers['Authorization'] = `Bearer ${data.token}`;
 
-    const response = await fetch(`https://api.hinova.com.br/api/sga/v2/buscar/boleto/${data.nossoNumero}`, {
+    const response = await fetch(`${this.baseURL}/buscar/boleto/${data.nossoNumero}`, {
       method: 'GET',
       headers: this.headers,
     });
@@ -90,7 +101,18 @@ class HinovaService {
   async getVehicle(data: {token: string, placa: string}) {
     this.headers['Authorization'] = `Bearer ${data.token}`;
 
-    const response = await fetch(`https://api.hinova.com.br/api/sga/v2/veiculo/buscar/${data.placa}`, {
+    const response = await fetch(`${this.baseURL}/veiculo/buscar/${data.placa}`, {
+      method: 'GET',
+      headers: this.headers
+    });
+
+    return response.json();
+  }
+
+  async updateSituacaoVehicle(data: {token: string, situacao: number, codigo_veiculo: number}) {
+    this.headers['Authorization'] = `Bearer ${data.token}`;
+
+    const response = await fetch(`${this.baseURL}/veiculo/alterar-situacao-para/${data.situacao}/${data.codigo_veiculo}`, {
       method: 'GET',
       headers: this.headers
     });
@@ -101,7 +123,7 @@ class HinovaService {
   async getProducts(data: {token: string, placa: string }) {
     this.headers['Authorization'] = `Bearer ${data.token}`;
 
-    const response = await fetch(`https://api.hinova.com.br/api/sga/v2/produto-vinculado-veiculo/listar/${data.placa}`, {
+    const response = await fetch(`${this.baseURL}/produto-vinculado-veiculo/listar/${data.placa}`, {
       method: 'GET',
       headers: this.headers
     });
@@ -112,7 +134,7 @@ class HinovaService {
   async listProducts(data: {token: string}) {
     this.headers['Authorization'] = `Bearer ${data.token}`;
 
-    const response = await fetch('https://api.hinova.com.br/api/sga/v2/grupoproduto/listar/ativo', {
+    const response = await fetch(`${this.baseURL}/grupoproduto/listar/ativo`, {
       method: 'GET',
       headers: this.headers
     });

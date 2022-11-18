@@ -18,6 +18,7 @@ export default StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 20,
     borderRadius: 4,
+    textAlign: 'center',
   },
 
   suggestName: {

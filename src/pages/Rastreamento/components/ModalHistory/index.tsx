@@ -4,6 +4,7 @@ import 'moment/locale/pt-br';
 import moment from 'moment';
 import MapView, {Marker, PROVIDER_GOOGLE, Polyline} from 'react-native-maps';
 import IconeMC from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconeArrow from 'react-native-vector-icons/Feather';
 
 import SmartService from "../../../../services/SmartService";
 
@@ -12,21 +13,24 @@ import ModalContext from '../../../../contexts/modalContext';
 
 import mapStyle from '../../mapStyle';
 import CloseModal from "../../../../components/FechaModal";
+import Loading from "../../../../components/Loading";
 
 import { Modal, View, Text, ChangeViagem } from "./styles";
 
 export default function ModalHistory({ visible, historico }) {
-  const { devices } = useContext(TrackContext);
+  const [loading, setLoading] = useState(true);
+  const { devices, tokenAssociadoGPS } = useContext(TrackContext);
   const { modal } = useContext(ModalContext);
   const width = Dimensions.get('screen').width;
   const height = Dimensions.get('screen').height;
-  const getItems1 = historico.length > 0 ? historico.filter((item: {status: number}) => item.status === 1) : [];
-  const getItems2 = historico.length > 0 ? getItems1.map((item) => item.items) : [];
+  const [history, setHistory] = useState(historico);
+  const getItems1 = history.length > 0 ? history.filter((item: {status: number}) => item.status ? item.status === 1 : item.status === 3) : [];
+  const getItems2 = history.length > 0 ? getItems1.map((item) => item.items) : [];
   const [viagem, setViagem] = useState(0);
-  const tail = historico.length > 0 ? getItems2[viagem].map((item) => ({latitude: item.lat, longitude: item.lng, speed: item.speed, time: item.device_time})) : [];
-  const viagemTotal = tail.length - 1;
+  const tail = history.length > 0 ? getItems2[viagem].map((item) => ({latitude: item.lat, longitude: item.lng, speed: item.speed, time: item.time})) : [];
+  const viagemTotal = tail.length;
   const viagemInicial = tail.length > 0 ? {latitude: tail[0].latitude, longitude: tail[0].longitude, time: tail[0].time} : {latitude: 0, longitude: 0};
-  const viagemFinal = tail.length > 0 ? {latitude: tail[viagemTotal].latitude, longitude: tail[viagemTotal].longitude} : {latitude: 0, longitude: 0};
+  const viagemFinal = tail.length > 0 ? {latitude: tail[viagemTotal - 1].latitude, longitude: tail[viagemTotal - 1].longitude, time: tail[viagemTotal - 1].time} : {latitude: 0, longitude: 0};
   const [enderecoInicial, setEnderecoInicial] = useState('');
   const [enderecoFinal, setEnderecoFinal] = useState('');
   const data = [
@@ -38,8 +42,8 @@ export default function ModalHistory({ visible, historico }) {
     {data: moment().subtract(5, 'days').format('DD-MM-YYYY')},
     {data: moment().subtract(6, 'days').format('DD-MM-YYYY')}
   ];
-  const [dataSelected, setDataSelected ]= useState(moment().format('DD-MM-YYYY'));
-
+  const [currentData, setCurrentData] = useState(0);
+  console.log(getItems2[viagem])
   async function getInicialAddress() {
     await SmartService.getAddress({latitude: viagemInicial.latitude, longitude: viagemInicial.longitude})
     .then((response) => setEnderecoInicial(response));
@@ -50,96 +54,98 @@ export default function ModalHistory({ visible, historico }) {
     .then((response) => setEnderecoFinal(response));
   }
 
+  async function getHistory(direction: string) {
+    setLoading(true);
+    setViagem(0);
+    setCurrentData(direction === 'dayAfter' ? currentData + 1 : currentData - 1)
+    const newData = direction === 'dayAfter' ? currentData + 1 : currentData - 1;
+
+    await SmartService.getHistory({token: String(tokenAssociadoGPS), id: devices[modal.device].id, dataSelected: data[newData].data})
+    .then((response) => {
+      setHistory(response.items)})
+    .finally(()=> setLoading(false));
+  }
+
+  useEffect(() => {
+    setHistory(historico);
+  }, [modal]);
+
   useEffect(() => {
     getInicialAddress();
-    getFinalAddress();
+    getFinalAddress().then(() => setLoading(false));
   }, [viagemInicial, viagemFinal]);
 
   return (
     <Modal visible={visible} animationType='slide' presentationStyle='formSheet'>
+      {loading && <Loading />}
       <View topButtons>
         <CloseModal />
       </View>
       <MapView
         initialRegion={{
-          latitude: devices[modal.device].lat,
-          longitude: devices[modal.device].lng,
+          latitude: viagemInicial.latitude,
+          longitude: viagemInicial.longitude,
           latitudeDelta: 0.0462 * 0.3,
           longitudeDelta: (width / height),
         }}
-          loadingEnabled={true}
-          loadingIndicatorColor={'#FF9800'}
-          showsCompass={true}
-          customMapStyle={mapStyle}
-          style={{height: '80%'}}
-          zoomTapEnabled={true}
-          minZoomLevel={12.5}
-          provider={PROVIDER_GOOGLE}>
+        loadingEnabled={true}
+        loadingIndicatorColor={'#FF9800'}
+        showsCompass={true}
+        customMapStyle={mapStyle}
+        style={{height: getItems2.length > 1 ? '75%' : '80%'}}
+        zoomTapEnabled={true}
+        minZoomLevel={12.5}
+        provider={PROVIDER_GOOGLE}
+      >
 
-      <Polyline
-        coordinates={tail}
-        strokeColor="#0c71c3"
-        strokeWidth={4}
-        lineDashPhase={1}
-      />
+        <Polyline
+          coordinates={tail}
+          strokeColor={'#0c71c3'}
+          strokeWidth={4}
+          lineDashPhase={1}
+        />
 
-      <Marker coordinate={viagemInicial}>
-        <View style={{backgroundColor: '#ff9800', width: 50, height: 50}}>
-          <IconeMC name={'car-connected'} size={25} color={'#0c71c3'} />
+        <Marker anchor={{x: 0.9, y: 0.9}} coordinate={viagemInicial}>
+          <View markerInicial>
+            <IconeMC name={'car-connected'} size={25} color={'#ffffff'} />
+          </View>
+        </Marker>
+
+        <Marker anchor={{x: 0.1, y: 0.1}} coordinate={viagemFinal}>
+          <View markerFinal>
+            <IconeMC name={'car-connected'} size={25} color={'#ffffff'} />
+          </View>
+        </Marker>
+      </MapView>
+
+      { getItems2.length > 1 && <View changeViagens>
+        <ChangeViagem onPress={() => viagem !== 0 && setViagem(viagem - 1)}>
+          <IconeArrow name="chevron-left" size={28} color={viagem > 0 ? '#659954' : '#e5fce7'} />
+        </ChangeViagem>
+        <Text changeViagens>Trocar viagem</Text>
+        <ChangeViagem onPress={() => viagem !== getItems2.length - 1 && setViagem(viagem + 1)}>
+          <IconeArrow name="chevron-right" size={28} color={getItems2.length - 1 > viagem ? '#659954' : '#e5fce7'} />
+        </ChangeViagem>
         </View>
-      </Marker>
+      }
 
-      <Marker coordinate={viagemFinal}>
-        <View style={{backgroundColor: '#ff9800', width: 50, height: 50}}>
-          <IconeMC name={'car-connected'} size={25} color={'#0c71c3'} />
-        </View>
-      </Marker>
-    </MapView>
-    <View infos>
-      <Text>{enderecoInicial}</Text>
-      <Text>{enderecoFinal}</Text>
-        {viagem !== viagemTotal -1 &&
-          <ChangeViagem onPress={() => setViagem(viagem + 1)}>
-            <Text>Proxima viagem</Text>
-          </ChangeViagem>
-        }
-        {viagem !== 0 &&
-          <ChangeViagem onPress={() => setViagem(viagem -1)}>
-            <Text>Viagem anterior</Text>
-          </ChangeViagem>
-        }
-    </View>
+      <View changeData>
+        <ChangeViagem onPress={() => currentData !== 0 && getHistory('dayBefore')}>
+          <IconeArrow name="chevron-left" size={28} color={currentData !== 0 ? '#0c71c3' : '#b1ddff'} />
+        </ChangeViagem>
+        <Text changeData>
+          {currentData === 0 ? 'Hoje' : currentData === 1 ? 'Ontem' : currentData === 2 ? data[2].data.replaceAll('-', '/') : currentData === 3 ? data[3].data.replaceAll('-', '/') : currentData === 4 ? data[4].data.replaceAll('-', '/') : currentData === 5 ? data[5].data.replaceAll('-', '/') : data[6].data.replaceAll('-', '/')}
+        </Text>
+        <ChangeViagem onPress={() => currentData < data.length - 1 && getHistory('dayAfter')}>
+          <IconeArrow name="chevron-right" size={28} color={currentData < data.length - 1 ? '#0c71c3' : '#b1ddff'} />
+        </ChangeViagem>
+      </View>
 
-          {/* <ScrollView style={styles.containerData} horizontal={true}>
-            {data.map((item, index) => {
-              return (
-                <TouchableOpacity
-                  style={dataSelected === item.data ?
-                    styles.botaoDatasSelected :
-                    styles.botaoDatas}
-                  key={index}
-                  onPressIn={() => setDataSelected(item.data)}
-                  onPressOut={() => getHistory(equipamento)}
-                  >
-                    {item.data === moment().format('DD-MM-YYYY') ?
-                    <Text
-                      style={dataSelected === item.data ?
-                        styles.datasSelected :
-                        styles.datas}>Hoje</Text> :
-                        item.data === moment().subtract(1, 'days').format('DD-MM-YYYY') ?
-                        <Text
-                          style={dataSelected === item.data ?
-                          styles.datasSelected :
-                          styles.datas}>Ontem</Text> :
-                          <Text
-                            style={dataSelected === item.data ?
-                            styles.datasSelected :
-                            styles.datas}>{item.data}</Text>}
-                </TouchableOpacity>
-              )
-            })}
-          </ScrollView> */}
-        </Modal>
+      <View infos>
+        <Text label>Origem: {viagemInicial.time} - <Text address>{enderecoInicial.replaceAll(',', ', ')}.</Text></Text>
+        <Text label>Destino: {viagemFinal.time} - <Text address>{enderecoFinal.replaceAll(',', ', ')}.</Text></Text>
+      </View>
+    </Modal>
   )
 }
 

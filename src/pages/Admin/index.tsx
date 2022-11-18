@@ -6,27 +6,18 @@ import {
   TouchableOpacity,
   SafeAreaView,
   TextInput,
-  Modal,
-  StatusBar,
   Alert,
 } from 'react-native';
 
 import Card from './components/Card';
 import AuthContext from '../../contexts/auth';
-import {useNavigation} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Feather';
-import IconFA from 'react-native-vector-icons/FontAwesome';
-import moment from 'moment';
-import cpfFormat from '../../utils/cpfFormat';
-import cnpjFormat from '../../utils/cnpjFormat';
 import Loading from  '../../components/Loading';
 import styles from './style';
 
 export default function Admin() {
-  const {tokenAssociadoHinova, ativos, inativos, tokenHinova, hinovaSignIn} = useContext(AuthContext);
-
+  const {tokenAssociadoHinova, ativos, inativos, inadimplentes, pendentes, tokenHinova} = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
-  const associados = [...ativos, ...inativos];
+  const associados = [...ativos, ...inativos, ...inadimplentes, ...pendentes];
   const [searchTerm, setSearchTerm] = useState('');
   const filteredAssociados = associados.filter((associado) => (
     associado.nome.toLowerCase().includes(searchTerm.toLowerCase())
@@ -42,7 +33,7 @@ export default function Admin() {
   async function handleChangeSearchData(associado) {
     setSearchTerm('');
     setLoading(true);
-    
+
     await fetch(`https://api.hinova.com.br/api/sga/v2/associado/buscar/${associado.cpf}`,
       {
         method: 'get',

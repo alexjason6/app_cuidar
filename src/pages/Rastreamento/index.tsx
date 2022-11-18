@@ -19,7 +19,7 @@ import SmartService from "../../services/SmartService";
 import Loading from '../../components/Loading';
 import ModalMap from './components/ModalMap';
 import ModalHistory from './components/ModalHistory';
-import Error from './error';
+import Error from './components/Error/error';
 import Header from '../../components/Header';
 import Card from './components/Card';
 import { Button } from '../../components/Button';
@@ -75,9 +75,7 @@ export const Rastreamento: React.FC = () => {
   }
 
   if (loading) {
-    return (
-      <Loading />
-    );
+    return <Loading />;
   }
 
   return (

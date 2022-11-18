@@ -1,14 +1,17 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, Alert, ScrollView, Modal, StatusBar, Share} from 'react-native';
+import {TouchableOpacity, Alert, Modal, StatusBar, Share} from 'react-native';
 import CardView from 'react-native-cardview';
-
-import AuthContext from '../../../contexts/auth';
 import moment from 'moment';
 import Clipboard from '@react-native-clipboard/clipboard';
-import styles from './styles';
 import Icon from 'react-native-vector-icons/Feather';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import { WebView } from 'react-native-webview';
+
+import AuthContext from '../../../contexts/auth';
+
+import HinovaService from '../../../services/HinovaService';
+
+import styles, {Container, Text, View, Button} from './styles';
 
 export default function Card({props}) {
   const [associado, setAssociado] = useState(props);
@@ -18,16 +21,10 @@ export default function Card({props}) {
   const [boletos, setBoletos] = useState([]);
   const [linkBoleto, setLinkBoleto] = useState('');
   const [modal, setModal] = useState(false);
-  const  headers = {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${tokenAssociadoHinova}`,
-  };
 
   useEffect(() => {
     buscaBoletos();
   }, []);
-
-  console.log(boletos)
 
   async function buscaBoletos() {
     const dataVencimentoOriginalInicial = moment().subtract(160, 'days').format('DD/MM/YYYY');
@@ -37,22 +34,56 @@ export default function Card({props}) {
       data_vencimento_original_inicial: String(dataVencimentoOriginalInicial),
       data_vencimento_original_final: String(hoje),
     };
-    await fetch(
-      'https://api.hinova.com.br/api/sga/v2/listar/boleto-associado-veiculo',
-      {
-        method: 'post',
-        body: JSON.stringify(bodyHinovaBoleto),
-        headers: headers,
-      },
-    )
-    .then((response) => response.json())
-    .then((data) => {
-      if(data.mensagem === 'Não aceitável') {
+
+    await HinovaService.getBoletos({token: String(tokenAssociadoHinova), body: bodyHinovaBoleto})
+    .then((response) => {
+      if(response.mensagem === 'Não aceitável') {
         setError(true);
       };
-      setBoletos(data.sort((a, b) => a.data_vencimento > b.data_vencimento ? -1 : 1));
+      setBoletos(response.sort((a: {data_vencimento: string}, b: {data_vencimento: string}) => a.data_vencimento > b.data_vencimento ? -1 : 1));
     })
     .catch(() => setError(true));
+  }
+
+  async function buscaPDF(nossoNumero: number) {
+    await HinovaService.getPdfBoleto({token: String(tokenAssociadoHinova), nossoNumero: nossoNumero})
+    .then((response) => setLinkBoleto(response.link_boleto))
+    .then(() => setModal(true));
+  }
+
+  async function handleChangeSituacaoAssociado(data: number) {
+    await HinovaService.updateSituacaoAssociado({token: String(tokenAssociadoHinova), situacao: data, codigo_associado: associado.codigo_associado })
+    .then((response) => {
+      if (response.mensagem === 'Alterado') {
+        Alert.alert('Sucesso', 'Associado alterado com sucesso.');
+        setSituacaoAssociado(data);
+      } else {
+        Alert.alert('Atenção', 'Erro ao alterar o associado. Tente novamente.')
+      }
+    });
+  }
+
+  async function handleChangeSituacaoVeiculo(data: {situacao: number, codigo_veiculo: number}) {
+    async function changeVeiculo() {
+      await HinovaService.updateSituacaoVehicle({token: String(tokenAssociadoHinova), situacao: data.situacao, codigo_veiculo: data.codigo_veiculo})
+      .then((response) => {
+        console.log(response)
+        if (response.mensagem === 'Não aceitável') {
+          Alert.alert('Atenção', 'Erro ao alterar o associado. Tente novamente.')
+        }
+        if (response.mensagem === 'Alterado') {
+          Alert.alert('Sucesso', 'Associado alterado com sucesso.')
+        }
+      })
+    }
+
+    async function refreshVeiculo() {
+      await HinovaService.getAssociado({token: String(tokenAssociadoHinova), cpfCnpj: associado.cpf})
+      .then((response) => setAssociado(response));
+    }
+
+    await changeVeiculo();
+    await refreshVeiculo();
   }
 
   const copyToClipboard = (index: string) => {
@@ -61,66 +92,6 @@ export default function Card({props}) {
     Alert.alert('Tudo certo!', 'Código de barras copiado com sucesso.');
   };
 
-  async function buscaPDF(nossoNumero: string) {
-    await fetch(
-      `https://api.hinova.com.br/api/sga/v2/buscar/boleto/${nossoNumero}`,
-      {
-        method: 'get',
-        headers: headers
-      },
-    )
-    .then((response) => response.json())
-    .then((data) => setLinkBoleto(data.link_boleto))
-    .then(() => setModal(true));
-  }
-
-  async function handleChangeSituacaoAssociado(data) {
-    await fetch(`https://api.hinova.com.br/api/sga/v2/associado/alterar-situacao-para/${data.situacao}/${associado.codigo_associado}`,
-    {
-      method: 'get',
-      headers: headers,
-    },)
-    .then((response) => response.json())
-    .then(() => Alert.alert('Sucesso', 'Associado alterado com sucesso.'))
-    .catch(() => Alert.alert('Atenção', 'Erro ao alterar o associado. Tente novamente.'))
-    .then(() => setSituacaoAssociado(data));
-  }
-
-  async function handleChangeSituacaoVeiculo({data}) {
-    async function changeVeiculo() {
-      await fetch(`https://api.hinova.com.br/api/sga/v2/veiculo/alterar-situacao-para/${data.situacao}/${data.codigo_veiculo}`,
-    {
-      method: 'get',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${tokenAssociadoHinova}`,
-      },
-    },)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.mensagem === 'Não aceitável') {
-        Alert.alert('Atenção', 'Erro ao alterar o associado. Tente novamente.')
-      }
-    })
-    .catch(() => Alert.alert('Atenção', 'Erro ao alterar o associado. Tente novamente.'));
-  }
-
-    async function refreshVeiculo() {
-        fetch(
-        `https://api.hinova.com.br/api/sga/v2/associado/buscar/${associado.cpf}`,
-        {
-          method: 'get',
-          headers: headers,
-        },
-      )
-      .then((response) => response.json())
-      .then((dataResponse) => setAssociado(dataResponse));
-    }
-
-    await changeVeiculo();
-    await refreshVeiculo();
-  }
-
   async function compartilha() {
     await Share.share({
      message: 'Boleto CUIDAR.',
@@ -128,24 +99,57 @@ export default function Card({props}) {
     });
   }
 
+
+  console.log(associado)
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.nomeAssociado}>{associado.nome}</Text>
-      <View style={styles.hrOrange} />
-      <Text style={styles.titleVeiculo}>{associado.veiculos.length > 1 ? 'Veículos' : 'Veículo'} do Associado</Text>
-      {associado.veiculos.sort((a, b) => a.codigo_situacao > b.codigo_situacao ? 1 : -1).map((veiculo, index) => (
-        <View key={index}>
-          <CardView cardElevation={5}>
-            <TouchableOpacity style={styles.buttonPlaca} onPress={() => handleChangeSituacaoVeiculo({data: {situacao: veiculo.situacao === 'ATIVO' ? 2 : 1, codigo_veiculo: veiculo.codigo_veiculo, placa: veiculo.placa, chassi: veiculo.chassi}})}>
-              {<IconFA name="list" size={20} color="#FF9800"/>}
-              <View style={styles.placaSituacao}>
-                <Text style={veiculo.situacao === 'ATIVO' ? styles.placa : styles.placaInativa}>{veiculo.placa ? veiculo.placa : veiculo.chassi}</Text>
-                <Text style={veiculo.situacao === 'ATIVO' ? styles.ativo : styles.inativo}>{veiculo.situacao}</Text>
-              </View>
-              <Text style={veiculo.situacao === 'ATIVO' ? styles.modelo : styles.modeloInativo}>{veiculo.descricao_modelo}</Text>
-            </TouchableOpacity>
-          </CardView>
-        </View>
+    <Container>
+      <Text
+        nomeAssociado
+        ativo={associado.descricao_situacao === 'ATIVO'}
+        inativo={associado.descricao_situacao === 'INATIVO'}
+        pendente={associado.descricao_situacao === 'PENDENTE'}
+        inadimplente={associado.descricao_situacao === 'INADIMPLENTE'}
+      >
+        {associado.nome} - {associado.descricao_situacao}
+      </Text>
+      <View hrOrange/>
+      <Text title>
+        {associado.veiculos.length > 1 ? 'Veículos' : 'Veículo'} do Associado
+      </Text>
+      {associado.veiculos
+      .sort((a, b) => a.codigo_situacao > b.codigo_situacao ? 1 : -1)
+      .map((veiculo, index) => (
+        <Button
+          style={styles.buttonPlaca}
+          key={index}
+          onPress={() => handleChangeSituacaoVeiculo({
+            situacao: veiculo.situacao === 'ATIVO' ? 2 : 1,
+            codigo_veiculo: veiculo.codigo_veiculo,
+          })}
+        >
+          <IconFA name="list" size={20} color="#cccccc"/>
+          <View placaSituacao>
+            <Text
+              placa
+              ativo={veiculo.situacao === 'ATIVO'}
+              inativo={veiculo.situacao === 'INATIVO'}
+              pendente={veiculo.situacao === 'PENDENTE'}
+              inadimplente={veiculo.situacao === 'INADIMPLENTE'}
+            >
+              {veiculo.placa ? veiculo.placa : veiculo.chassi}
+            </Text>
+            <Text
+              situacao
+              ativo={veiculo.situacao === 'ATIVO'}
+              inativo={veiculo.situacao === 'INATIVO'}
+              pendente={veiculo.situacao === 'PENDENTE'}
+              inadimplente={veiculo.situacao === 'INADIMPLENTE'}
+            >
+              {veiculo.situacao}
+            </Text>
+          </View>
+          <Text modelo>{veiculo.descricao_modelo}</Text>
+        </Button>
       ))}
 
       <Text style={styles.titleVeiculo}>{boletos.length > 1 ? 'Boletos' : 'Boleto'} do Associado</Text>
@@ -198,7 +202,7 @@ export default function Card({props}) {
                     boleto.data_pagamento !== null
                   ? `Boleto pago em ${moment(boleto.data_pagamento).format(
                       'DD/MM/YYYY',
-                    )}` 
+                    )}`
                   : 'Aguardando pagamento'}
               </Text>
               <Text style={styles.vencimentoBoleto}>
@@ -238,6 +242,6 @@ export default function Card({props}) {
           </TouchableOpacity>
         </View>
       </Modal>
-    </ScrollView>
+    </Container>
   )
 }

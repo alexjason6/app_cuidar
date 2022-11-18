@@ -41,6 +41,10 @@ export const View = styled.View`
     border-radius: 25px;
     background: ${({theme}) => theme.colors.grays.main};
   `};
+
+  ${({ligado}) => ligado && css`
+    background: ${({theme}) => theme.colors.blues.main};
+  `};
 `;
 
 export const Text = styled.Text`

@@ -179,8 +179,11 @@ export const TrackProvider: React.FC = ({children}) => {
   async function getDevices() {
     await SmartService.getDevice(tokenAssociadoGPS)
     .then((response) => {
-
       if (response.length === 0) {
+        setError(true);
+      }
+
+      if (response.status === 0) {
         setError(true);
       }
 

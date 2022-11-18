@@ -74,8 +74,8 @@ export default function ModalMap({visible}) {
             strokeWidth={4}
           />
           <Marker centerOffset={{x: 0, y: 0}} coordinate={{ latitude: devices[modal.device].lat, longitude: devices[modal.device].lng }}>
-            <View marker>
-              <IconeMC name={'car-connected'} size={25} color={devices[modal.device].online === 'online' ? '#40C351' : '#ffffff'} />
+            <View marker ligado={devices[modal.device].online === 'online'}>
+              <IconeMC name={'car-connected'} size={25} color={'#ffffff'} />
             </View>
           </Marker>
 
