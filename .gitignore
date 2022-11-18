@@ -253,14 +253,11 @@ render.experimental.xml
 # Google Services (e.g. APIs or Firebase)
 google-services.json
 GoogleService-Info.plist
-
+AndroidManifest.xml
+AndroidManifest.xml
+AppDelegate.m
+Info.plist
 # Android Profiling
 *.hprof
 
-ios/CUIDARV2/AppDelegate.m
-android/app/src/main/AndroidManifest.xml
-android/android/app/src/main/AndroidManifest.xml
-android/android/google-services.json
-ios/google-services.json
-ios/CUIDARV2/Info.plist
 # End of https://www.toptal.com/developers/gitignore/api/reactnative
