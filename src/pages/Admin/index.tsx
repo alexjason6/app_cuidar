@@ -13,9 +13,10 @@ import Card from './components/Card';
 import AuthContext from '../../contexts/auth';
 import Loading from  '../../components/Loading';
 import styles from './style';
+import HinovaService from '../../services/HinovaService';
 
 export default function Admin() {
-  const {tokenAssociadoHinova, ativos, inativos, inadimplentes, pendentes, tokenHinova} = useContext(AuthContext);
+  const {tokenAssociadoHinova, ativos, inativos, inadimplentes, pendentes, refreshToken} = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const associados = [...ativos, ...inativos, ...inadimplentes, ...pendentes];
   const [searchTerm, setSearchTerm] = useState('');
@@ -30,26 +31,25 @@ export default function Admin() {
     setSearchTerm(event);
   }
 
-  async function handleChangeSearchData(associado) {
+  async function atualizaToken() {
+    refreshToken();
+  }
+
+  async function handleChangeSearchAssociado(associado) {
     setSearchTerm('');
     setLoading(true);
 
-    await fetch(`https://api.hinova.com.br/api/sga/v2/associado/buscar/${associado.cpf}`,
-      {
-        method: 'get',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${tokenAssociadoHinova}`,
-        },
-      },
-    )
-    .then((response) => response.json())
-    .catch(() => {
-      Alert.alert('Tente novamente', 'Ocorreu um erro ao carregar os dados do associado.')
-    })
-    .then((data) => setAssociado(data))
-    .then(() => setMostraAssociado(true))
-    .finally(() => setLoading(false));
+    try {
+      const response = await HinovaService.getAssociado({token: String(tokenAssociadoHinova), cpfCnpj: associado.cpf})
+
+      console.log('certo:', tokenAssociadoHinova);
+      setAssociado(response);
+      setMostraAssociado(true);
+      setLoading(false);
+    } catch {
+      Alert.alert('Tente novamente', 'Ocorreu um erro ao carregar os dados do associado.');
+      setLoading(false);
+    }
   }
 
   return (
@@ -59,7 +59,7 @@ export default function Admin() {
         <ScrollView>
           {filteredAssociados.length >= 1 && searchTerm.length >= 3 ? (
             filteredAssociados.map((associado, index) => (
-              <TouchableOpacity key={index} onPress={() => handleChangeSearchData(associado)} style={styles.suggestName}>
+              <TouchableOpacity key={index} onPress={() => handleChangeSearchAssociado(associado)} style={styles.suggestName}>
                 <Text style={styles.textSuggestName}>{associado.nome}</Text>
               </TouchableOpacity>
             ))

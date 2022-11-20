@@ -1,5 +1,5 @@
-import React, {createContext, useState, useEffect, useContext} from 'react';
-import {Alert, Linking} from 'react-native'
+import React, {createContext, useState, useEffect, useContext, useRef} from 'react';
+import {Alert, Linking, AppState} from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import moment from 'moment';
@@ -267,6 +267,8 @@ export const AuthProvider: React.FC = ({children}) => {
     tokenHinova: '',
   });
   const {signOutVisitante} = useContext(VisitanteContext);
+  const state = useRef(AppState.currentState);
+  const [appState, setAppState] = useState(state.current);
 
   async function getAccessData() {
     await CuidarService.getDataAcess()
@@ -277,8 +279,8 @@ export const AuthProvider: React.FC = ({children}) => {
     })
   };
 
-  async function logaHinova(dataAccess: { login: string, senha: string, tokenHinova: string }) {
-    await HinovaService.signIn({body: { usuario: dataAccess.login, senha: dataAccess.senha, token: dataAccess.tokenHinova }})
+  async function logaHinova(data: {tokenHinova: string, login: string, senha: string}) {
+    await HinovaService.signIn({token: data.tokenHinova, body: {usuario: data.login, senha: data.senha}})
     .then((response: {mensagem: string, token_usuario: string}) => {
       setTokenAssociadoHinova(response.token_usuario);
 
@@ -291,9 +293,8 @@ export const AuthProvider: React.FC = ({children}) => {
     setHoraToken(moment().format('HH:MM'));
   };
 
-
   async function refreshToken() {
-    await HinovaService.signIn({body: { usuario: accessData.login, senha: accessData.senha, token: accessData.tokenHinova }})
+    await HinovaService.signIn({token: accessData.tokenHinova, body: {usuario: accessData.login, senha: accessData.senha}})
     .then((response) => {
       setTokenAssociadoHinova(response.token_usuario);
     })
@@ -460,18 +461,6 @@ export const AuthProvider: React.FC = ({children}) => {
     setLoading(false);
   }
 
-  useEffect(() => {
-    function VerificaInternet() {
-      NetInfo.fetch().then(state => {
-        if ((state.isConnected = true)) {
-          setConectado(true);
-        }
-      });
-    }
-    VerificaInternet();
-    getAccessData();
-  }, []);
-
   async function signOut() {
     setLoading(true);
     await AsyncStorage.clear()
@@ -484,6 +473,34 @@ export const AuthProvider: React.FC = ({children}) => {
       setLoading(false);
     });
   }
+
+  function refreshAppState() {
+    const currentAppState = AppState.addEventListener('change', nextAppState => {
+      state.current = nextAppState;
+      setAppState(state.current);
+
+      if (nextAppState === 'active') {
+        refreshToken();
+      }
+    });
+
+    return () => {
+      currentAppState.remove();
+    };
+  }
+
+  useEffect(() => {
+    function VerificaInternet() {
+      NetInfo.fetch().then(state => {
+        if ((state.isConnected = true)) {
+          setConectado(true);
+        }
+      });
+    }
+    VerificaInternet();
+    getAccessData();
+    refreshAppState();
+  }, []);
 
   return (
     <AuthContext.Provider

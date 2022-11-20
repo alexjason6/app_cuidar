@@ -5,12 +5,16 @@ class HinovaService {
 
   baseURL = 'https://api.hinova.com.br/api/sga/v2';
 
-  async signIn(options: {body: { usuario: string, senha: string, token: string }}) {
-    this.headers['Authorization'] = `Bearer ${options.body.token}`;
+  async signIn(data: { token: string, body: {
+    usuario: string, senha: string,
+  } }) {
+    this.headers['Authorization'] = `Bearer ${data.token}`;
+
+    console.log(data)
 
     const response = await fetch(`${this.baseURL}/usuario/autenticar`, {
       method: 'POST',
-      body: JSON.stringify(options.body),
+      body: JSON.stringify(data.body),
       headers: this.headers,
     });
 
