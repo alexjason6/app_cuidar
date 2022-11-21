@@ -221,7 +221,7 @@ export const AuthProvider: React.FC = ({children}) => {
   const [loading, setLoading] = useState(true);
   const [associadoLogado, setAssociadoLogado] = useState();
   const [tokenAssociadoHinova, setTokenAssociadoHinova] = useState('');
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<AuthContextData['user']>();
   const [conectado, setConectado] = useState(false);
   const [ativos, setAtivos] = useState([{
     bairro: '',
@@ -301,7 +301,7 @@ export const AuthProvider: React.FC = ({children}) => {
   }
 
   async function refreshAssociado() {
-    const cpfCnpj: string = user.cpf.length === 18 ? user.cpf.replace('/', '.') : cpfFormat(user.cpf);
+    const cpfCnpj: string = user?.cpf.length === 18 ? user.cpf.replace('/', '.') : cpfFormat(user?.cpf);
 
     await HinovaService.getAssociado({token: tokenAssociadoHinova, cpfCnpj: cpfCnpj})
     .then((response) => {
@@ -363,7 +363,7 @@ export const AuthProvider: React.FC = ({children}) => {
     })
     .catch(() => Alert.alert('Atenção', 'Não foi possível buscar os itens inadimplentes'));
 
-    buscaBoletoVencimento({token: accessData.token, cpfCnpj: accessData.cpfCnpj, response: user});
+    buscaBoletoVencimento({token: accessData.token, cpfCnpj: accessData.cpfCnpj, userResponse: user});
   }
 
   async function buscaAssociado(token: string, cpfCnpj: string) {
@@ -426,7 +426,7 @@ export const AuthProvider: React.FC = ({children}) => {
       if (response.codigo_situacao === Number(1)) {
         setUser(response);
         setLoading(false);
-        buscaBoletoVencimento({token, cpfCnpj: cpfCnpjType, response})
+        buscaBoletoVencimento({token, cpfCnpj: cpfCnpjType, userResponse: response})
       }
 
       if (response.mensagem === 'Não aceitável') {
@@ -441,7 +441,7 @@ export const AuthProvider: React.FC = ({children}) => {
     setLoading(false);
   }
 
-  async function buscaBoletoVencimento(accessData: {token: string, cpfCnpj: string, response: {}}) {
+  async function buscaBoletoVencimento(accessData: {token: string, cpfCnpj: string, userResponse: {}}) {
     const dataVencimentoOriginalInicial = moment().subtract(30, 'days').format('DD/MM/YYYY');
     const hoje = moment().add(30, 'days').format('DD/MM/YYYY');
     const body = {
@@ -454,7 +454,7 @@ export const AuthProvider: React.FC = ({children}) => {
     .then((response) => {
       const [boleto] = response;
       if (user) {
-        sendAssociadoData({boleto, user: accessData.response});
+        sendAssociadoData({boleto, user: accessData.userResponse});
       }
     })
     .catch(() => console.log('error envio dados firestore'));
@@ -490,17 +490,19 @@ export const AuthProvider: React.FC = ({children}) => {
   }
 
   useEffect(() => {
-    function VerificaInternet() {
+    function verificaInternet() {
       NetInfo.fetch().then(state => {
         if ((state.isConnected = true)) {
           setConectado(true);
         }
       });
     }
-    VerificaInternet();
+
+    verificaInternet();
     getAccessData();
     refreshAppState();
   }, []);
+
 
   return (
     <AuthContext.Provider

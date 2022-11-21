@@ -1,149 +1,58 @@
+import HttpClientHinova from './utils/httpClientHinova';
+
 class HinovaService {
-  headers = {
-    'Content-Type': 'application/json',
-  };
+  httpClient: HttpClientHinova;
 
-  baseURL = 'https://api.hinova.com.br/api/sga/v2';
+  constructor() {
+    this.httpClient = new HttpClientHinova('https://api.hinova.com.br/api/sga/v2');
+  }
 
-  async signIn(data: { token: string, body: {
-    usuario: string, senha: string,
-  } }) {
-    this.headers['Authorization'] = `Bearer ${data.token}`;
-
-    console.log(data)
-
-    const response = await fetch(`${this.baseURL}/usuario/autenticar`, {
-      method: 'POST',
-      body: JSON.stringify(data.body),
-      headers: this.headers,
-    });
-
-    return response.json();
+  async signIn(data: { token: string, body: {usuario: string, senha: string} }) {
+    return this.httpClient.post('/usuario/autenticar', {token: data.token, body: {usuario: data.body.usuario, senha: data.body.senha}});
   }
 
   async getAssociados(data: {codigo_situacao: number, token: string}) {
-    this.headers['Authorization'] = `Bearer ${data.token}`;
-
-    const response = await fetch(`${this.baseURL}/listar/associado/`, {
-      method: 'POST',
-      body: JSON.stringify({codigo_situacao: data.codigo_situacao}),
-      headers: this.headers
-    });
-
-    return response.json();
+    return this.httpClient.post('/listar/associado/', {token: data.token, body: {codigo_situacao: data.codigo_situacao}});
   }
 
   async getAssociado(data: {token: string, cpfCnpj: string}) {
-    this.headers['Authorization'] = `Bearer ${data.token}`;
-
-    const response = await fetch(`${this.baseURL}/associado/buscar/${data.cpfCnpj}`, {
-      method: 'GET',
-      headers: this.headers,
-    });
-
-    return response.json();
+    return this.httpClient.get(`/associado/buscar/${data.cpfCnpj}`, {token: data.token});
   }
 
   async updateAssociado(data: {token: string, body: {}}) {
-    this.headers['Authorization'] = `Bearer ${data.token}`;
-
-    const response = await fetch(`${this.baseURL}/alterar/associado`, {
-      method: 'POST',
-      headers: this.headers,
-      body: JSON.stringify(data.body)
-    });
-
-    return response.json();
+    return this.httpClient.post('/alterar/associado', {token: data.token, body: data.body});
   }
 
   async updateSituacaoAssociado(data: {token: string, situacao: number, codigo_associado: number}) {
-    this.headers['Authorization'] = `Bearer ${data.token}`;
-
-    const response = await fetch(`${this.baseURL}/associado/alterar-situacao-para/${data.situacao}/${data.codigo_associado}`, {
-      method: 'GET',
-      headers: this.headers,
-    });
-
-    return response.json();
+    return this.httpClient.get(`/associado/alterar-situacao-para/${data.situacao}/${data.codigo_associado}`, {token: data.token});
   }
 
   async getDataVencimento(data: {token: string, body: { cpf_associado: string, data_vencimento_original_inicial: string, data_vencimento_original_final: string }}) {
-    this.headers['Authorization'] = `Bearer ${data.token}`;
-
-    const response = await fetch(`${this.baseURL}/listar/boleto-associado-veiculo`, {
-      method: 'POST',
-      body: JSON.stringify(data.body),
-      headers: this.headers
-    });
-
-    return response.json();
+    return this.httpClient.post('/listar/boleto-associado-veiculo', {token: data.token, body: data.body});
   }
 
   async getBoletos(data: {token: string, body:{}}) {
-    this.headers['Authorization'] = `Bearer ${data.token}`;
-
-    const response = await fetch(`${this.baseURL}/listar/boleto-associado-veiculo`,{
-      method: 'POST',
-      body: JSON.stringify(data.body),
-      headers: this.headers,
-    });
-
-    return response.json()
+    return this.httpClient.post('/listar/boleto-associado-veiculo', {token: data.token, body: data.body});
   }
 
   async getPdfBoleto(data: {token: string, nossoNumero: number}) {
-    this.headers['Authorization'] = `Bearer ${data.token}`;
-
-    const response = await fetch(`${this.baseURL}/buscar/boleto/${data.nossoNumero}`, {
-      method: 'GET',
-      headers: this.headers,
-    });
-
-    return response.json();
+    return this.httpClient.get(`/buscar/boleto/${data.nossoNumero}`, {token: data.token});
   }
 
   async getVehicle(data: {token: string, placa: string}) {
-    this.headers['Authorization'] = `Bearer ${data.token}`;
-
-    const response = await fetch(`${this.baseURL}/veiculo/buscar/${data.placa}`, {
-      method: 'GET',
-      headers: this.headers
-    });
-
-    return response.json();
+    return this.httpClient.get(`/veiculo/buscar/${data.placa}`, {token: data.token});
   }
 
   async updateSituacaoVehicle(data: {token: string, situacao: number, codigo_veiculo: number}) {
-    this.headers['Authorization'] = `Bearer ${data.token}`;
-
-    const response = await fetch(`${this.baseURL}/veiculo/alterar-situacao-para/${data.situacao}/${data.codigo_veiculo}`, {
-      method: 'GET',
-      headers: this.headers
-    });
-
-    return response.json();
+    return this.httpClient.get(`/veiculo/alterar-situacao-para/${data.situacao}/${data.codigo_veiculo}`, {token: data.token});
   }
 
   async getProducts(data: {token: string, placa: string }) {
-    this.headers['Authorization'] = `Bearer ${data.token}`;
-
-    const response = await fetch(`${this.baseURL}/produto-vinculado-veiculo/listar/${data.placa}`, {
-      method: 'GET',
-      headers: this.headers
-    });
-
-    return response.json();
+    return this.httpClient.get(`/produto-vinculado-veiculo/listar/${data.placa}`, {token: data.token});
   }
 
   async listProducts(data: {token: string}) {
-    this.headers['Authorization'] = `Bearer ${data.token}`;
-
-    const response = await fetch(`${this.baseURL}/grupoproduto/listar/ativo`, {
-      method: 'GET',
-      headers: this.headers
-    });
-
-    return response.json();
+    return this.httpClient.get('/grupoproduto/listar/ativo', {token: data.token});
   }
 }
 
