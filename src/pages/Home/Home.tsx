@@ -2,7 +2,7 @@ import React, {useState, useContext, useEffect} from 'react';
 import { Image } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 
-import AuthContext from '../../contexts/auth';
+import AuthContext from '../../contexts/authContext';
 import ModalContext from '../../contexts/modalContext';
 
 import {Button} from '../../components/Button/index';

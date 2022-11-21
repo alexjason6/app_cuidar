@@ -12,7 +12,7 @@ import styles from './style';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import VisitanteContext from '../../contexts/visitante';
+import VisitanteContext from '../../contexts/guestContext';
 import 'intl';
 import 'intl/locale-data/jsonp/pt-BR'; // or any other locale you need
 
@@ -119,7 +119,7 @@ const ProdutosCotacaoNA: React.FC = () => {
       setCasco(276);
     } else if (Number(totalCasco) > 105.001 && Number(totalCasco) <= 115.0) {
       setCasco(316);
-    } 
+    }
     if (casco !== 0 && assistenciaCheck) {
       setAssistencia(12);
     } else if (!assistenciaCheck) {

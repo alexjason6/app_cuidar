@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useNavigation } from '@react-navigation/native';
 
-import AuthContext from '../../contexts/auth';
+import AuthContext from '../../contexts/authContext';
 
 import sendEmail from '../../utils/sendEmail';
 import Header from '../../components/Header';
@@ -24,11 +24,11 @@ const Falecom: React.FC = () => {
 
     if (!setor) {
       Alert.alert('Atenção', 'Escolha um setor para continuar.');
-    } 
-    
+    }
+
     if (!mensagem) {
       Alert.alert('Atenção', 'Escreva sua mensagem.');
-    } 
+    }
     if (setor && mensagem) {
       try {
         sendEmail({setor, mensagem, user, dadosVeiculo})

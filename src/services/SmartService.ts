@@ -1,68 +1,30 @@
+import HttpClientSmart from './utils/httpClientSmart';
+
 class SmartService {
+  httpClient: HttpClientSmart;
 
-  baseURL = 'https://web.smartgps.com.br';
-
-  async signInEmail(email: string) {
-
-    const data = new FormData();
-    data.append('email', email);
-    data.append('password', '123456');
-
-    const response = await fetch(`${this.baseURL}/api/login`, {
-      method: 'POST',
-      body: data,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      }
-    });
-
-    return response.json();
+  constructor() {
+    this.httpClient = new HttpClientSmart('https://web.smartgps.com.br');
   }
 
-  async signInCpf(cpf: string) {
-
+  async signIn(login: string) {
     const data = new FormData();
-    data.append('email', cpf);
+    data.append('email', login);
     data.append('password', '123456');
 
-    const response = await fetch(`${this.baseURL}/api/login`, {
-      method: 'POST',
-      body: data,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      }
-    });
-
-    return response.json();
+    return this.httpClient.post('/api/login', {headers: {'Content-Type': 'multipart/form-data'}, body: data});
   }
 
   async getDevice(token: string) {
-    const response = await fetch(`${this.baseURL}/api/get_devices?user_api_hash=${token}`, {
-      method: 'GET',
-    });
-    return response.json();
+    return this.httpClient.get(`/api/get_devices?user_api_hash=${token}`, {});
   }
 
   async getHistory(accessData: {token: string, id: string, dataSelected: string}) {
-    const response = await fetch(`${this.baseURL}/api/get_history/?lang=en&user_api_hash=${accessData.token}&device_id=${accessData.id}&from_date=${accessData.dataSelected}&from_time=00%3A00&to_date=${accessData.dataSelected}&to_time=23%3A59`, {
-      method: 'GET',
-    });
-
-    return response.json();
+    return this.httpClient.get(`/api/get_history/?lang=en&user_api_hash=${accessData.token}&device_id=${accessData.id}&from_date=${accessData.dataSelected}&from_time=00%3A00&to_date=${accessData.dataSelected}&to_time=23%3A59`, {});
   }
 
   async getAddress(accessData: {latitude: number, longitude: number}) {
-    const response = await fetch(`${this.baseURL}/geo_address?lat=${accessData.latitude}&lon=${accessData.longitude}`, {
-      method: 'GET',
-    });
-
-    return response.text();
-  }
-
-  async sendEngineCommand(accessData: {token: string}) {
-    const response = await fetch(`${this.baseURL}/api/send_command_data/?lang=en&user_api_hash=${accessData.token}`);
-
-    return response.json();
+    return this.httpClient.get(`/geo_address?lat=${accessData.latitude}&lon=${accessData.longitude}`,  'getAddress');
   }
 }
 

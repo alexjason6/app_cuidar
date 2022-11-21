@@ -1,7 +1,7 @@
 import React, {useContext, useState} from "react";
 import {Alert} from 'react-native';
 
-import AuthContext from "../../../../contexts/auth";
+import AuthContext from "../../../../contexts/authContext";
 
 import { Input } from '../../../../components/Input';
 import { Button } from '../../../../components/Button';

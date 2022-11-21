@@ -3,7 +3,7 @@ import { Keyboard, Alert } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import ModalContext from '../../../../contexts/modalContext';
-import AuthContext from "../../../../contexts/auth";
+import AuthContext from "../../../../contexts/authContext";
 
 import formatCnpj from "../../../../utils/cnpjFormat";
 import formatCpf from "../../../../utils/cpfFormat";

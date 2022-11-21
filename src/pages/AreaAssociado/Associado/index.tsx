@@ -3,7 +3,7 @@ import {Alert} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import moment from 'moment';
 
-import AuthContext from '../../../contexts/auth';
+import AuthContext from '../../../contexts/authContext';
 
 import HinovaService from '../../../services/HinovaService';
 import Loading from '../../../components/Loading';

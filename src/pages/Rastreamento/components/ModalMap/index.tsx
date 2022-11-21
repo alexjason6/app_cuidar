@@ -6,7 +6,7 @@ import 'moment/locale/pt-br';
 import moment from 'moment';
 
 import SmartService from "../../../../services/SmartService";
-import TrackerContext from '../../../../contexts/rastreamento';
+import TrackerContext from '../../../../contexts/trackerContext';
 import ModalContext from "../../../../contexts/modalContext";
 
 import CloseModal from '../../../../components/FechaModal';

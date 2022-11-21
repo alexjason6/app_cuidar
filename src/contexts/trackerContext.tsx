@@ -1,7 +1,7 @@
 import React, {createContext, useState, useContext, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import AuthContext from '../contexts/auth';
+import AuthContext from './authContext';
 
 import SmartService from '../services/SmartService';
 
@@ -151,27 +151,22 @@ export const TrackProvider: React.FC = ({children}) => {
   }, []);
 
   async function loginSmart() {
-    await SmartService.signInEmail(user.email)
+    await SmartService.signIn(user.email)
     .then((response) => {
       if (response.status === 1) {
         setTokenAssociadoGPS(response.user_api_hash);
       }
-
     })
-    .catch((response) => {
+    .catch(async (response) => {
       if (response.status !== 1) {
-        loginSmartCPF();
-      }
-    });
-  }
-
-  async function loginSmartCPF() {
-    await SmartService.signInCpf(cpfExtracted)
-    .then((response) => {
-      if (response.status === 1) {
-        setTokenAssociadoGPS(response.user_api_hash);
-      } else {
-        setError(true);
+        await SmartService.signIn(user.cpf)
+        .then((response) => {
+          if (response.status === 1) {
+            setTokenAssociadoGPS(response.user_api_hash);
+          } else {
+            setError(true);
+          }
+        })
       }
     });
   }

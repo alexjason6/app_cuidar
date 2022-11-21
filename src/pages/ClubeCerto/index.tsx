@@ -10,7 +10,7 @@ import {
   SafeAreaView,
   Linking,
 } from 'react-native';
-import AuthContext from "../../contexts/auth";
+import AuthContext from "../../contexts/authContext";
 import styles from './style'
 import buscarClubeCerto from "../../services/apiClubeCerto";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -251,7 +251,7 @@ const ClubeCerto: React.FC = () => {
       setCidades(response.data);
       const cities = JSON.stringify(response.data);
       AsyncStorage.setItem('@CUIDAR:cities', cities);
-      
+
       const data = {
         codEstado: uf.Codigo,
         codCidade: response.data[0].Codigo,
@@ -266,7 +266,7 @@ const ClubeCerto: React.FC = () => {
    useEffect(() => {
     const [uf] = estados.filter((item) => user.estado === item.Sigla);
      getCity(uf);
-  }, []); 
+  }, []);
 
   async function pegaEstabelecimentos(data:Object) {
     await buscarClubeCerto.get(`2/estabelecimentos.php?user=cuidar&token=acuidar%40clube19384&estado=${data.codEstado}&cidade=${data.codCidade}`)
@@ -414,7 +414,7 @@ const ClubeCerto: React.FC = () => {
             }
           </List.Accordion>
       </List.Section> ) : null}
-        
+
         {loading ? (
           <View style={styles.containerLoading}>
             <ActivityIndicator color="#FF9800" />
@@ -458,7 +458,7 @@ const ClubeCerto: React.FC = () => {
                   )
                 })}
               </Text>
-              {dadosEstabelecimento.Linksite ? 
+              {dadosEstabelecimento.Linksite ?
               <TouchableOpacity style={styles.botaoDesconto} onPress={() => {
                 Linking.openURL(dadosEstabelecimento.Linksite)
               }}>
@@ -488,6 +488,6 @@ const ClubeCerto: React.FC = () => {
     </ScrollView>
   )
 }
- 
+
 export default ClubeCerto;
 

@@ -17,7 +17,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import styles from './style';
 import {useNavigation} from '@react-navigation/native';
-import buscarFIPE from '../../services/apiFipe';
+import FipeService from '../../services/FipeService';
 
 const Captacao: React.FC = () => {
   const navigation = useNavigation();
@@ -37,9 +37,9 @@ const Captacao: React.FC = () => {
   async function buscarCarros() {
     setLoading(true);
     try {
-      const montadoras = await buscarFIPE.get('/carros/marcas');
-      setMarcas(montadoras.data);
-      setArrayHolder(montadoras.data);
+      const montadoras = await FipeService.buscaValor('/carros/marcas');
+      setMarcas(montadoras);
+      setArrayHolder(montadoras);
     } catch {
       Alert.alert('Atenção', 'Algo não deu certo. Tente novamente.');
     }
@@ -48,20 +48,20 @@ const Captacao: React.FC = () => {
 
   async function buscarMotos() {
     setLoading(true);
-    const montadoras = await buscarFIPE.get('/motos/marcas');
-    setMarcas(montadoras.data);
-    setArrayHolder(montadoras.data);
+    const montadoras = await FipeService.buscaValor('/motos/marcas');
+    setMarcas(montadoras);
+    setArrayHolder(montadoras);
     setLoading(false);
   }
 
   async function buscarModelos() {
     setFilter(null);
     setLoading(true);
-    const modeloVeiculos = await buscarFIPE.get(
+    const modeloVeiculos = await FipeService.buscaValor(
       `/${tipoVeiculo}/marcas/${checkBoxMarca}/modelos`,
     );
-    setModelosFipe(modeloVeiculos.data.modelos);
-    setArrayHolder(modeloVeiculos.data.modelos);
+    setModelosFipe(modeloVeiculos.modelos);
+    setArrayHolder(modeloVeiculos.modelos);
 
     setLoading(false);
   }
@@ -69,22 +69,21 @@ const Captacao: React.FC = () => {
   async function buscarAno() {
     setFilter(null);
     setLoading(true);
-    const anoVeiculos = await buscarFIPE.get(
+    const anoVeiculos = await FipeService.buscaValor(
       `/${tipoVeiculo}/marcas/${checkBoxMarca}/modelos/${checkBoxModelo}/anos`,
     );
-    setAnoModelo(anoVeiculos.data);
-    setArrayHolder(anoVeiculos.data);
+    setAnoModelo(anoVeiculos);
+    setArrayHolder(anoVeiculos);
     setLoading(false);
   }
 
   async function buscarResultadoFipe() {
     setFilter(null);
-    await buscarFIPE
-      .get(
+    await FipeService.buscaValor(
         `/${tipoVeiculo}/marcas/${checkBoxMarca}/modelos/${checkBoxModelo}/anos/${checkBoxAno}`,
       )
       .then((response) => {
-        const responseData: Object = response.data;
+        const responseData: Object = response;
         navigation.navigate('ProdutosCotacaoNA', {
           responseData,
           tipoVeiculo,

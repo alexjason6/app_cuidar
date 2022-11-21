@@ -8,7 +8,7 @@ import IconeArrow from 'react-native-vector-icons/Feather';
 
 import SmartService from "../../../../services/SmartService";
 
-import TrackContext from '../../../../contexts/rastreamento';
+import TrackContext from '../../../../contexts/trackerContext';
 import ModalContext from '../../../../contexts/modalContext';
 
 import mapStyle from '../../mapStyle';
@@ -43,7 +43,7 @@ export default function ModalHistory({ visible, historico }) {
     {data: moment().subtract(6, 'days').format('DD-MM-YYYY')}
   ];
   const [currentData, setCurrentData] = useState(0);
-  console.log(getItems2[viagem])
+
   async function getInicialAddress() {
     await SmartService.getAddress({latitude: viagemInicial.latitude, longitude: viagemInicial.longitude})
     .then((response) => setEnderecoInicial(response));

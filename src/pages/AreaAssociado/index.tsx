@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import moment from 'moment';
 
-import AuthContext from '../../contexts/auth';
+import AuthContext from '../../contexts/authContext';
 import ModalContext from '../../contexts/modalContext';
 
 import cpfFormat from '../../utils/cpfFormat';

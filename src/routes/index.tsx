@@ -1,8 +1,8 @@
 import React, {useContext} from 'react';
 import {View, ActivityIndicator, StyleSheet} from 'react-native';
 
-import AuthContext from '../contexts/auth';
-import VisitanteContext from '../contexts/visitante';
+import AuthContext from '../contexts/authContext';
+import VisitanteContext from '../contexts/guestContext';
 import AppRoutes from './app.routes';
 import AuthRoutes from './auth.routes';
 import VisitanteRoutes from './visitante.routes';

@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import { WebView } from 'react-native-webview';
 
-import AuthContext from '../../../contexts/auth';
+import AuthContext from '../../../contexts/authContext';
 
 import HinovaService from '../../../services/HinovaService';
 

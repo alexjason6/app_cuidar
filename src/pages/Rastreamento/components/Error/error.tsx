@@ -4,8 +4,8 @@ import {
   RefreshControl,
 } from 'react-native';
 
-import AuthContext from '../../../../contexts/auth';
-import TrackContext from '../../../../contexts/rastreamento';
+import AuthContext from '../../../../contexts/authContext';
+import TrackContext from '../../../../contexts/trackerContext';
 
 import Header from '../../../../components/Header';
 import {Button} from '../../../../components/Button';

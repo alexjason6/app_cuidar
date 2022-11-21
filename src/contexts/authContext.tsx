@@ -6,7 +6,7 @@ import moment from 'moment';
 
 import CuidarService from '../services/CuidarService';
 import HinovaService from '../services/HinovaService';
-import VisitanteContext from '../contexts/visitante';
+import VisitanteContext from './guestContext';
 
 import cpfFormat from '../utils/cpfFormat';
 import sendAssociadoData from '../utils/sendAssociadoData';

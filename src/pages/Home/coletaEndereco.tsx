@@ -13,8 +13,8 @@ import {
 } from 'react-native';
 
 import TextInputMask from 'react-native-text-input-mask';
-import VisitanteContext from '../../contexts/visitante';
-import cepApi from '../../services/apiCep';
+import VisitanteContext from '../../contexts/guestContext';
+import CepService from '../../services/CEPService';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import styles from './style';
 import Icon from 'react-native-vector-icons/Feather';
@@ -75,7 +75,7 @@ const ColetaEndereco: React.FC = () => {
       if (cep.length < 8) {
         Alert.alert('Atenção!', 'Por favor, digite todos os números do CEP para continuar.');
       } else {
-        const response = await cepApi.get(`${cep}/json/`);
+        const response = await CepService.buscaCep(`${cep}/json/`);
         if (response.data.erro === true) {
           Alert.alert(
             'Atenção',

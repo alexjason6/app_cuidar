@@ -2,7 +2,7 @@ import React, {useContext, useState, useEffect, useCallback} from 'react';
 import {RefreshControl} from 'react-native';
 import moment from 'moment';
 
-import AuthContext from '../../../contexts/auth';
+import AuthContext from '../../../contexts/authContext';
 import ModalContext from '../../../contexts/modalContext';
 
 import {Button} from '../../../components/Button';
@@ -15,7 +15,7 @@ import {Container, Content, Text} from './styles';
 
 export default function MyWebComponent() {
   const {user, tokenAssociadoHinova} = useContext(AuthContext);
-  const {changeModal} = useContext(ModalContext); 
+  const {changeModal} = useContext(ModalContext);
   const [error, setError] = useState(false);
   const [boletos, setBoletos] = useState<[]>([]);
   const [linkBoleto, setLinkBoleto] = useState();

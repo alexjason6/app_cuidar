@@ -12,7 +12,7 @@ import styles from './style';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import VisitanteContext from '../../contexts/visitante';
+import VisitanteContext from '../../contexts/guestContext';
 
 const ProdutosContinuaNA: React.FC = () => {
   const {dadosCompletos} = useContext(VisitanteContext);

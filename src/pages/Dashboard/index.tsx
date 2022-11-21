@@ -1,8 +1,8 @@
 import React, {useContext, useEffect, useLayoutEffect,} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import AuthContext from '../../contexts/auth';
-import TrackContext from '../../contexts/rastreamento';
+import AuthContext from '../../contexts/authContext';
+import TrackContext from '../../contexts/trackerContext';
 
 import Loading from '../../components/Loading';
 import Card from './components/Card';

@@ -11,7 +11,7 @@ import {
 import styles from './style';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
-import VisitanteContext from '../../contexts/visitante';
+import VisitanteContext from '../../contexts/guestContext';
 import RegulamentoAssociado from '../Cotacao/associado';
 import AssistenciaCarros from '../Cotacao/carros';
 import AssistenciaMotos from '../Cotacao/motos';

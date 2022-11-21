@@ -5,9 +5,9 @@ import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/Feather';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 
-import AuthContext from '../contexts/auth';
-import VisitanteContext from '../contexts/visitante';
-import TrackContext from '../contexts/rastreamento';
+import AuthContext from '../contexts/authContext';
+import VisitanteContext from '../contexts/guestContext';
+import TrackContext from '../contexts/trackerContext';
 
 import wellcomeMessage from '../utils/wellcomeMessage';
 
@@ -67,7 +67,7 @@ export function DrawerContent(props) {
                 }}
               />
             )
-              
+
             }
           </Drawer.Section>
           <Drawer.Section title="Área do Associado" labelStyle={{color: '#666666'}}>

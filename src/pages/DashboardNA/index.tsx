@@ -17,9 +17,9 @@ import styles from './style';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Feather';
 import IconFA from 'react-native-vector-icons/FontAwesome';
-import VisitanteContext from '../../contexts/visitante';
+import VisitanteContext from '../../contexts/guestContext';
 import TextInputMask from 'react-native-text-input-mask';
-import AuthContext from '../../contexts/auth';
+import AuthContext from '../../contexts/authContext';
 
 const DashboardNA: React.FC = () => {
   const {dadosCompletos, visitante} = useContext(VisitanteContext);
@@ -31,7 +31,7 @@ const DashboardNA: React.FC = () => {
   const idHandler = text => {
     setCpf_cnpj(text);
   };
-  
+
   async function handleSignIn() {
     if (cpf_cnpj) {
       try {

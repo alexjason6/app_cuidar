@@ -12,7 +12,7 @@ import {
 import 'moment/locale/pt-br';
 import moment from 'moment';
 
-import TrackContext from '../../contexts/rastreamento';
+import TrackContext from '../../contexts/trackerContext';
 import ModalContext from '../../contexts/modalContext';
 
 import SmartService from "../../services/SmartService";

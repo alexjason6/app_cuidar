@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import Card from './components/Card';
-import AuthContext from '../../contexts/auth';
+import AuthContext from '../../contexts/authContext';
 import Loading from  '../../components/Loading';
 import styles from './style';
 import HinovaService from '../../services/HinovaService';
@@ -31,18 +31,12 @@ export default function Admin() {
     setSearchTerm(event);
   }
 
-  async function atualizaToken() {
-    refreshToken();
-  }
-
   async function handleChangeSearchAssociado(associado) {
     setSearchTerm('');
     setLoading(true);
 
     try {
       const response = await HinovaService.getAssociado({token: String(tokenAssociadoHinova), cpfCnpj: associado.cpf})
-
-      console.log('certo:', tokenAssociadoHinova);
       setAssociado(response);
       setMostraAssociado(true);
       setLoading(false);

@@ -24,7 +24,7 @@ import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import VisitanteContext from '../../contexts/visitante';
+import VisitanteContext from '../../contexts/guestContext';
 
 const ColetaDadosCompletos: React.FC = () => {
   const navigation = useNavigation();
