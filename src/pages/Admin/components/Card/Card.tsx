@@ -1,26 +1,27 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {TouchableOpacity, Alert, Modal, StatusBar, Share} from 'react-native';
-import CardView from 'react-native-cardview';
+import {Alert} from 'react-native';
 import moment from 'moment';
 import Clipboard from '@react-native-clipboard/clipboard';
 import Icon from 'react-native-vector-icons/Feather';
 import IconFA from 'react-native-vector-icons/FontAwesome';
-import { WebView } from 'react-native-webview';
 
-import AuthContext from '../../../contexts/authContext';
+import AuthContext from '../../../../contexts/authContext';
+import ModalContext from '../../../../contexts/modalContext';
 
-import HinovaService from '../../../services/HinovaService';
+import HinovaService from '../../../../services/HinovaService';
 
-import styles, {Container, Text, View, Button} from './styles';
+import {Button} from '../../../../components/Button';
+import ModalBoletos from '../Modal';
+
+import {Container, Text, View, ButtonCard} from './styles';
 
 export default function Card({props}) {
   const [associado, setAssociado] = useState(props);
   const {tokenAssociadoHinova} = useContext(AuthContext);
+  const {modal, changeModal} = useContext(ModalContext);
   const [situacaoAssociado, setSituacaoAssociado] = useState(associado.codigo_situacao);
-  const [error, setError] = useState(false);
   const [boletos, setBoletos] = useState([]);
   const [linkBoleto, setLinkBoleto] = useState('');
-  const [modal, setModal] = useState(false);
 
   useEffect(() => {
     buscaBoletos();
@@ -38,17 +39,24 @@ export default function Card({props}) {
     await HinovaService.getBoletos({token: String(tokenAssociadoHinova), body: bodyHinovaBoleto})
     .then((response) => {
       if(response.mensagem === 'Não aceitável') {
-        setError(true);
+        Alert.alert('Erro',  'Alguma coisa deu errado. Tente novamente em instantes.');
       };
       setBoletos(response.sort((a: {data_vencimento: string}, b: {data_vencimento: string}) => a.data_vencimento > b.data_vencimento ? -1 : 1));
     })
-    .catch(() => setError(true));
+    .catch(() => Alert.alert('Erro',  'Alguma coisa deu errado. Tente novamente em instantes.'));
   }
 
   async function buscaPDF(nossoNumero: number) {
     await HinovaService.getPdfBoleto({token: String(tokenAssociadoHinova), nossoNumero: nossoNumero})
-    .then((response) => setLinkBoleto(response.link_boleto))
-    .then(() => setModal(true));
+    .then((response) => {
+
+      if (response.error) {
+        Alert.alert('Erro',  'Alguma coisa deu errado. Tente novamente em instantes.');
+      }
+
+      setLinkBoleto(response.link_boleto);
+    })
+    .finally(() => changeModal({modalName: 'modalBoletos', active: true, device: 0}));
   }
 
   async function handleChangeSituacaoAssociado(data: number) {
@@ -67,7 +75,6 @@ export default function Card({props}) {
     async function changeVeiculo() {
       await HinovaService.updateSituacaoVehicle({token: String(tokenAssociadoHinova), situacao: data.situacao, codigo_veiculo: data.codigo_veiculo})
       .then((response) => {
-        console.log(response)
         if (response.mensagem === 'Não aceitável') {
           Alert.alert('Atenção', 'Erro ao alterar o associado. Tente novamente.')
         }
@@ -92,15 +99,6 @@ export default function Card({props}) {
     Alert.alert('Tudo certo!', 'Código de barras copiado com sucesso.');
   };
 
-  async function compartilha() {
-    await Share.share({
-     message: 'Boleto CUIDAR.',
-     url: linkBoleto,
-    });
-  }
-
-
-  console.log(associado)
   return (
     <Container>
       <Text
@@ -119,8 +117,7 @@ export default function Card({props}) {
       {associado.veiculos
       .sort((a, b) => a.codigo_situacao > b.codigo_situacao ? 1 : -1)
       .map((veiculo, index) => (
-        <Button
-          style={styles.buttonPlaca}
+        <ButtonCard
           key={index}
           onPress={() => handleChangeSituacaoVeiculo({
             situacao: veiculo.situacao === 'ATIVO' ? 2 : 1,
@@ -149,99 +146,55 @@ export default function Card({props}) {
             </Text>
           </View>
           <Text modelo>{veiculo.descricao_modelo}</Text>
-        </Button>
+        </ButtonCard>
       ))}
 
-      <Text style={styles.titleVeiculo}>{boletos.length > 1 ? 'Boletos' : 'Boleto'} do Associado</Text>
-      {boletos.length < 1 && (<Text>Nenhum boleto para o Associado</Text>)}
+      <Text title>{boletos.length > 1 ? 'Boletos' : 'Boleto'} do Associado</Text>
+      {boletos.length < 1 && (<Text semBoletos>Nenhum boleto para o Associado</Text>)}
       {boletos && (
-        boletos.map((boleto, index) => (
-          <CardView cardElevation={5} key={index}>
-            <TouchableOpacity style={styles.buttonBoleto} onPress={() => buscaPDF(boleto.nosso_numero)} >
-              {boleto.situacao_boleto === 'BAIXADO' ? (
-                  <IconFA name="thumbs-up" size={25} color={'#ff9800'} />
-                ) : boleto.situacao_boleto === 'ABERTO' &&
-                  moment().format('X') <=
-                    moment(boleto.data_vencimento).format('X') ? (
-                  <IconFA name="barcode" size={25} color={'#666666'} />
-                ) : boleto.situacao_boleto === 'ABERTO' &&
-                  moment().format('X') >
-                    moment(boleto.data_vencimento).format('X') ? (
-                  <Icon name="alert-triangle" size={30} color={'#e60000'} />
-                ) : null
-              }
-              <View style={styles.linhaDigitavel}>
-                <Text style={styles.digitavel}>
-                  {boleto.linha_digitavel ===
-                  'Não foi possível disponibilizar esta informação pois o boleto se encontra na situação BAIXADO'
-                    ? null
-                    : boleto.linha_digitavel}
-                </Text>
-                {boleto.situacao_boleto === 'BAIXADO' ? null : (
-                  <TouchableOpacity
-                    style={styles.iconCopy}
-                    onPress={() => {
-                      copyToClipboard(index);
-                    }}>
-                    <Icon name="copy" size={28} color={'#0c71c3'} />
-                  </TouchableOpacity>
-                )}
-              </View>
-              <Text style={boleto.situacao_boleto !== 'ABERTO' ? styles.valorBoleto : styles.valorBoletoAberto}>
+        boletos.map((boleto: {linha_digitavel: string, situacao_boleto: string, valor_boleto: string, tipo_boleto: string, veiculos: [], nosso_numero: number, data_vencimento: string, }, index) => {
+          const status = boleto.situacao_boleto === 'ABERTO' ? 'AGUARDANDO PAGAMENTO' : boleto.situacao_boleto === 'BAIXADO' || 'BAIXADO C/ PENDÊNCIA' ? 'BOLETO PAGO' : boleto.situacao_boleto === 'ABERTO' &&  moment().format('X') < moment(boleto.data_vencimento).format('X') ? 'BOLETO ATRASADO' : boleto.situacao_boleto === 'EXCLUIDO' ? 'BOLETO EXCLUÍDO' : null
+          return (
+            <ButtonCard onPress={() => buscaPDF(boleto.nosso_numero)} key={index}>
+              <Text title>{status}</Text>
+              <IconFA name={status === 'AGUARDANDO PAGAMENTO' ? 'barcode' : status === 'BOLETO PAGO' ? 'check' : 'exclamation-triangle'} size={30} color={status === 'AGUARDANDO PAGAMENTO' ? '#999999' : status === 'BOLETO PAGO' ? '#40C351' : '#e60000'} />
+            <View copyView>
+              <Text barCode>{boleto.linha_digitavel}</Text>
+              {status === ('AGUARDANDO PAGAMENTO' || 'BOLETO ATRASADO') && <ButtonCard onPress={copyToClipboard}><Icon name={'copy'} size={30} color={'#0c71c3'} /></ButtonCard>}
+            </View>
+              <Text valor>
                 {Intl.NumberFormat('pt-BR', {
                   style: 'currency',
                   currency: 'BRL',
                 }).format(boleto.valor_boleto)}
               </Text>
-              <Text style={styles.situacaoBoleto}>
-                {moment().format('X') >
-                  moment(boleto.data_vencimento).format('X') &&
-                boleto.situacao_boleto === 'ABERTO'
-                  ? 'BOLETO ATRASADO'
-                  : boleto.situacao_boleto !== 'ABERTO' &&
-                    boleto.data_pagamento !== null
-                  ? `Boleto pago em ${moment(boleto.data_pagamento).format(
-                      'DD/MM/YYYY',
-                    )}`
-                  : 'Aguardando pagamento'}
-              </Text>
-              <Text style={styles.vencimentoBoleto}>
-                <Icon name="calendar" size={16} color={'#db2800'} />{' '}
-                {moment(boleto.data_vencimento).format('DD/MM/YYYY')}
-              </Text>
-              <Text style={boleto.situacao_boleto !== 'ABERTO' ? styles.tipoBoleto : styles.tipoBoletoAberto}>
-                {boleto.tipo_boleto}
-              </Text>
-            </TouchableOpacity>
-          </CardView>
+              <View dateView>
+                <IconFA name={'calendar'} size={15} color={'#e60000'} />
+                <Text vencimento>Vencimento em: {moment(boleto.data_vencimento).format('DD/MM/YYYY')}</Text>
+              </View>
+              <Text tipo>{boleto.tipo_boleto}</Text>
+              {boleto.veiculos.map((placa: {codigo_veiculo: number, placa: string}) => (
+                <Text placas key={placa.codigo_veiculo}>{placa.placa}</Text>
+              ))}
+            </ButtonCard>
+          )}
         ))
-      )}
+      }
       {situacaoAssociado === 1 ? (
-      <TouchableOpacity style={styles.buttonDesativar} onPress={() => handleChangeSituacaoAssociado(2)}>
-        <Text style={styles.textButton}>Inativar Associado</Text>
-      </TouchableOpacity>
-      ) : (
-        <TouchableOpacity style={styles.buttonAtivar} onPress={() => handleChangeSituacaoAssociado(1)}>
-        <Text style={styles.textButton}>Ativar Associado</Text>
-      </TouchableOpacity>
-      )}
-      <Modal visible={modal} animationType={'fade'} style={styles.viewPDF}>
-        <StatusBar barStyle={'dark-content'} animated />
-        <View style={{height:100, backgroundColor: '#ff9800'}} />
-        <WebView allowFileAccessFromFileURLs source={{uri:linkBoleto}} style={styles.viewBoleto}/>
-        <TouchableOpacity onPress={compartilha} style={styles.btnCompartilha}>
-          <Text style={{textAlign: 'center', color: '#fff', fontWeight: 'bold'}}>Compartilhar PDF</Text>
-        </TouchableOpacity>
-        <View style={styles.btnFechaModal}>
-          <TouchableOpacity
-            style={styles.fechaModal}
-            onPress={() => {
-              setModal(false);
-            }}>
-            <Icon name="x" size={18} color={'#FF9800'} />
-          </TouchableOpacity>
+        <View buttons>
+          <Button danger onPress={() => handleChangeSituacaoAssociado(2)}>
+            <Text buttons>Inativar associado</Text>
+          </Button>
+          <Button alert onPress={() => handleChangeSituacaoAssociado(1)}>
+            <Text buttons>Associado inadimplente</Text>
+          </Button>
         </View>
-      </Modal>
+      ) : (
+      <Button activate onPress={() => handleChangeSituacaoAssociado(1)}>
+        <Text buttons>Ativar Associado</Text>
+      </Button>
+      )}
+      <ModalBoletos visible={modal.modalName === 'modalBoletos' && modal.active === true} linkBoleto={linkBoleto}/>
     </Container>
   )
 }

@@ -475,14 +475,18 @@ export const AuthProvider: React.FC = ({children}) => {
   }
 
   function refreshAppState() {
+     console.log('passou aqui')
     const currentAppState = AppState.addEventListener('change', nextAppState => {
       state.current = nextAppState;
       setAppState(state.current);
 
       if (nextAppState === 'active') {
         refreshToken();
+        console.log(state.current)
       }
     });
+
+    console.log('Oi', state.current)
 
     return () => {
       currentAppState.remove();

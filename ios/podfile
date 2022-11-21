@@ -10,11 +10,13 @@ target 'CUIDARV2' do
   config = use_native_modules!
   use_react_native!(:path => config["reactNativePath"])
   pod 'RNInputMask', :path => '../node_modules/react-native-text-input-mask/ios/InputMask'
-  #permissions_path = '../node_modules/react-native-permissions/ios'
-  #pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
-  #pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse"
-  #pod 'Permission-MediaLibrary', :path => "#{permissions_path}/MediaLibrary"
-  #pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary"
+  permissions_path = '../node_modules/react-native-permissions/ios'
+  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+  pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse"
+  pod  'Permission-LocationAccuracy', :path => "#{permissions_path}/LocationAccuracy"
+  pod 'Permission-LocationAlways', :path => "#{permissions_path}/LocationAlways"
+  pod 'Permission-MediaLibrary', :path => "#{permissions_path}/MediaLibrary"
+  pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary"
 
     # React Native Maps dependencies
     rn_maps_path = '../node_modules/react-native-maps'

@@ -54,6 +54,6 @@ export const Text = styled.Text`
 
   ${({placas}) => placas && css`
     font-size: 14px;
-    color: ${({theme}) => theme.colors.blues.main};;
+    color: ${({theme}) => theme.colors.blues.main};
   `};
 `;

@@ -58,7 +58,28 @@ export const Button = styled.TouchableOpacity`
   ${({historyView}) => historyView && css`
     width: 150px;
     height: 40px;
-    border-width: 1px;
     border-color: ${({theme}) => theme.colors.grays.disabled};
+  `};
+
+  ${({danger}) => danger && css`
+    height: 40px;
+    background: ${({theme}) => theme.colors.danger.main};
+  `};
+
+  ${({alert}) => alert && css`
+    height: 40px;
+    background: ${({theme}) => theme.colors.alert.main};
+  `};
+
+  ${({activate}) => activate && css`
+    width: 100%;
+    height: 40px;
+    background: ${({theme}) => theme.colors.blues.main};
+  `};
+
+  ${({shareBoleto}) => shareBoleto && css`
+    width: 100%;
+    height: 100px;
+    background: ${({theme}) => theme.colors.blues.main};
   `};
 `;
