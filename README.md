@@ -5,9 +5,8 @@ O APP foi criado com ReactNative em 2020 e vem passando por diversas atualizaç�
 
 Este projeto utiliza ReactNative, Firebase e uma API do sistema de gestão.
 
-## Links APP
 
-Você precisa ter instalado em sua máquina os itens abaixo:
+## Links APP
 
 •[APP IOS](https://apps.apple.com/us/app/cuidar-proteção-veicular/id1499385515),
 
