@@ -17,7 +17,7 @@ import {Container, Text, View, ButtonCard} from './styles';
 
 export default function Card({props}) {
   const [associado, setAssociado] = useState(props);
-  const {tokenAssociadoHinova} = useContext(AuthContext);
+  const {tokenAssociadoHinova, refreshAssociado, refreshToken} = useContext(AuthContext);
   const {modal, changeModal} = useContext(ModalContext);
   const [situacaoAssociado, setSituacaoAssociado] = useState(associado.codigo_situacao);
   const [boletos, setBoletos] = useState([]);
@@ -28,6 +28,7 @@ export default function Card({props}) {
   }, []);
 
   async function buscaBoletos() {
+    const token = await refreshToken();
     const dataVencimentoOriginalInicial = moment().subtract(160, 'days').format('DD/MM/YYYY');
     const hoje = moment().add(30, 'days').format('DD/MM/YYYY');
     const bodyHinovaBoleto = {
@@ -36,18 +37,22 @@ export default function Card({props}) {
       data_vencimento_original_final: String(hoje),
     };
 
-    await HinovaService.getBoletos({token: String(tokenAssociadoHinova), body: bodyHinovaBoleto})
+    await HinovaService.getBoletos({token: String(token), body: bodyHinovaBoleto})
     .then((response) => {
+
       if(response.mensagem === 'Não aceitável') {
-        Alert.alert('Erro',  'Alguma coisa deu errado. Tente novamente em instantes.');
+        Alert.alert('Erro',  'Não foi possível carregar os boletos deste associado.');
       };
+
       setBoletos(response.sort((a: {data_vencimento: string}, b: {data_vencimento: string}) => a.data_vencimento > b.data_vencimento ? -1 : 1));
     })
     .catch(() => Alert.alert('Erro',  'Alguma coisa deu errado. Tente novamente em instantes.'));
   }
 
   async function buscaPDF(nossoNumero: number) {
-    await HinovaService.getPdfBoleto({token: String(tokenAssociadoHinova), nossoNumero: nossoNumero})
+    const token = await refreshToken();
+
+    await HinovaService.getPdfBoleto({token: String(token), nossoNumero: nossoNumero})
     .then((response) => {
 
       if (response.error) {
@@ -60,7 +65,9 @@ export default function Card({props}) {
   }
 
   async function handleChangeSituacaoAssociado(data: number) {
-    await HinovaService.updateSituacaoAssociado({token: String(tokenAssociadoHinova), situacao: data, codigo_associado: associado.codigo_associado })
+    const token = await refreshToken();
+
+    await HinovaService.updateSituacaoAssociado({token: String(token), situacao: data, codigo_associado: associado.codigo_associado })
     .then((response) => {
       if (response.mensagem === 'Alterado') {
         Alert.alert('Sucesso', 'Associado alterado com sucesso.');
@@ -69,11 +76,15 @@ export default function Card({props}) {
         Alert.alert('Atenção', 'Erro ao alterar o associado. Tente novamente.')
       }
     });
+
+    await HinovaService.getAssociado({token: String(token), cpfCnpj: associado.cpf}).then((response) => setAssociado(response))
   }
 
   async function handleChangeSituacaoVeiculo(data: {situacao: number, codigo_veiculo: number}) {
+    const token = await refreshToken();
+
     async function changeVeiculo() {
-      await HinovaService.updateSituacaoVehicle({token: String(tokenAssociadoHinova), situacao: data.situacao, codigo_veiculo: data.codigo_veiculo})
+      await HinovaService.updateSituacaoVehicle({token: String(token), situacao: data.situacao, codigo_veiculo: data.codigo_veiculo})
       .then((response) => {
         if (response.mensagem === 'Não aceitável') {
           Alert.alert('Atenção', 'Erro ao alterar o associado. Tente novamente.')
@@ -85,7 +96,9 @@ export default function Card({props}) {
     }
 
     async function refreshVeiculo() {
-      await HinovaService.getAssociado({token: String(tokenAssociadoHinova), cpfCnpj: associado.cpf})
+      const token = await refreshToken();
+
+      await HinovaService.getAssociado({token: String(token), cpfCnpj: associado.cpf})
       .then((response) => setAssociado(response));
     }
 

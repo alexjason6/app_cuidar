@@ -221,7 +221,7 @@ export const AuthProvider: React.FC = ({children}) => {
   const [loading, setLoading] = useState(true);
   const [associadoLogado, setAssociadoLogado] = useState();
   const [tokenAssociadoHinova, setTokenAssociadoHinova] = useState('');
-  const [user, setUser] = useState<AuthContextData['user']>();
+  const [user, setUser] = useState();
   const [conectado, setConectado] = useState(false);
   const [ativos, setAtivos] = useState([{
     bairro: '',
@@ -294,10 +294,10 @@ export const AuthProvider: React.FC = ({children}) => {
   };
 
   async function refreshToken() {
-    await HinovaService.signIn({token: accessData.tokenHinova, body: {usuario: accessData.login, senha: accessData.senha}})
-    .then((response) => {
-      setTokenAssociadoHinova(response.token_usuario);
-    })
+    const response = await HinovaService.signIn({token: accessData.tokenHinova, body: {usuario: accessData.login, senha: accessData.senha}});
+    setTokenAssociadoHinova(response.token_usuario);
+
+    return response.token_usuario;
   }
 
   async function refreshAssociado() {
@@ -475,18 +475,14 @@ export const AuthProvider: React.FC = ({children}) => {
   }
 
   function refreshAppState() {
-     console.log('passou aqui')
     const currentAppState = AppState.addEventListener('change', nextAppState => {
       state.current = nextAppState;
       setAppState(state.current);
 
       if (nextAppState === 'active') {
         refreshToken();
-        console.log(state.current)
       }
     });
-
-    console.log('Oi', state.current)
 
     return () => {
       currentAppState.remove();

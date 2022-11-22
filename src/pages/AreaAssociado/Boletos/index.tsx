@@ -14,7 +14,7 @@ import Error from './components/Error';
 import {Container, Content, Text} from './styles';
 
 export default function MyWebComponent() {
-  const {user, tokenAssociadoHinova} = useContext(AuthContext);
+  const {user, refreshToken} = useContext(AuthContext);
   const {changeModal} = useContext(ModalContext);
   const [error, setError] = useState(false);
   const [boletos, setBoletos] = useState<[]>([]);
@@ -35,6 +35,7 @@ export default function MyWebComponent() {
   }, [buscaBoletos]);
 
   async function buscaBoletos() {
+    const token = await refreshToken();
     const dataVencimentoOriginalInicial = moment().subtract(160, 'days').format('DD/MM/YYYY');
     const hoje = moment().add(30, 'days').format('DD/MM/YYYY');
     const bodyHinovaBoleto = {
@@ -42,7 +43,8 @@ export default function MyWebComponent() {
       data_vencimento_original_inicial: String(dataVencimentoOriginalInicial),
       data_vencimento_original_final: String(hoje),
     };
-    await HinovaService.getBoletos({token: String(tokenAssociadoHinova), body: bodyHinovaBoleto})
+
+    await HinovaService.getBoletos({token: String(token), body: bodyHinovaBoleto})
     .then((response) => {
       if(response.mensagem === ('Não aceitável' || 'Acesso não autorizado. Verique seu token de acesso')) {
         setError(true);
@@ -54,7 +56,9 @@ export default function MyWebComponent() {
   }
 
   async function buscaPDF(nossoNumero: number) {
-    await HinovaService.getPdfBoleto({token: String(tokenAssociadoHinova), nossoNumero})
+    const token = await refreshToken();
+
+    await HinovaService.getPdfBoleto({token: String(token), nossoNumero})
     .then((response) => {
       setLinkBoleto(response.link_boleto);
       changeModal({modalName: 'modalBoleto', active: true, device: 0});

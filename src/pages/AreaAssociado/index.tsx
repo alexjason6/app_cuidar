@@ -22,7 +22,7 @@ import {Container, Content, ButtonVehicle, Text} from './style';
 
 
 export default function AreaAssociado() {
-  const {user, loading, tokenAssociadoHinova, refreshToken, refreshAssociado} = useContext(AuthContext);
+  const {user, loading, refreshToken, refreshAssociado} = useContext(AuthContext);
   const navigation = useNavigation();
   const {changeModal} = useContext(ModalContext);
   const [dadosVeiculo, setDadosVeiculo] = useState({});
@@ -40,7 +40,9 @@ export default function AreaAssociado() {
   }, [refreshToken]);
 
   async function buscaVeiculo(carro: number) {
-     await HinovaService.getVehicle({token: String(tokenAssociadoHinova), placa: user.veiculos[carro].placa})
+    const token = await refreshToken();
+
+     await HinovaService.getVehicle({token: String(token), placa: user.veiculos[carro].placa})
     .then(([response]) => setDadosVeiculo(response))
     .catch(() => {
       Alert.alert('Erro!', 'Alguma coisa deu errado. Por favor tente novamente.');
@@ -52,7 +54,9 @@ export default function AreaAssociado() {
   }
 
   async function buscaProdutos(carro: number) {
-    await HinovaService.getProducts({token: String(tokenAssociadoHinova), placa:  user.veiculos[carro].placa})
+    const token = await refreshToken();
+
+    await HinovaService.getProducts({token: String(token), placa:  user.veiculos[carro].placa})
     .then((response) => setProdutos(response.produtos))
     .then(() => changeModal({modalName: 'vehiclesDetails', active: true, device: carro}))
     .catch(() => Alert.alert('Atenção', 'Não Foi possível carregar os produtos. Tente novamente mais tarde.'));

@@ -13,7 +13,7 @@ export const View = styled.View`
     height: 40px;
     position: absolute;
     background: transparent;
-    justify-content: space-between;
+    justify-content: flex-end;
     flex-direction: row;
     z-index: 9999;
   `};

@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Alert } from "react-native";
 import MapView, {Marker, PROVIDER_GOOGLE, Polyline} from 'react-native-maps';
 import IconeMC from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/Feather';
@@ -13,15 +14,15 @@ import CloseModal from '../../../../components/FechaModal';
 import mapStyle from '../../mapStyle';
 import { ButtonHistory } from '../ButtonHistory/ButtonHistory';
 import Infos from './../../components/Infos';
+import ModalHistory from '../ModalHistory';
 
 import { Container, View, ChangeDevice, Text } from './styles';
 
 export default function ModalMap({visible}) {
-  const { devices } = useContext(TrackerContext);
+  const { devices, tokenAssociadoGPS } = useContext(TrackerContext);
   const { modal, changeModal } = useContext(ModalContext);
   const [endereco, setEndereco] = useState('');
   const tail = devices[modal.device].tail.map((item: {lat: number, lng: number}) => ({latitude: Number(item.lat), longitude: Number(item.lng)}));
-
 
   async function handleChangeDevice(direction: string) {
     if (direction === 'minus') {
@@ -45,10 +46,6 @@ export default function ModalMap({visible}) {
   return (
     <Container visible={visible} presentationStyle={'formSheet'} animationType="slide">
       <View topButtons>
-        <ButtonHistory>
-          <IconeMC name={'format-list-bulleted'} size={20} color={'#ff9800'} />
-        </ButtonHistory>
-
         <CloseModal />
       </View>
       <MapView
@@ -103,6 +100,4 @@ export default function ModalMap({visible}) {
       />
     </Container>
   )
-
-
 }

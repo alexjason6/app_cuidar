@@ -35,8 +35,10 @@ export default function Admin() {
     setSearchTerm('');
     setLoading(true);
 
+    const token = await refreshToken();
+
     try {
-      const response = await HinovaService.getAssociado({token: String(tokenAssociadoHinova), cpfCnpj: associado.cpf})
+      const response = await HinovaService.getAssociado({token: String(token), cpfCnpj: associado.cpf})
       setAssociado(response);
       setMostraAssociado(true);
       setLoading(false);
@@ -49,15 +51,21 @@ export default function Admin() {
   return (
     <SafeAreaView style={{marginBottom: 80}}>
       <View>
-        <TextInput style={styles.inputSearch} onChangeText={handleChangeSearchTerm} value={searchTerm.toUpperCase()} placeholder='Digite o nome do Associado' placeholderTextColor='#666666' />
+        <TextInput
+          style={styles.inputSearch}
+          onChangeText={handleChangeSearchTerm}
+          value={searchTerm.toUpperCase()}
+          placeholder='Digite o nome do Associado'
+          placeholderTextColor='#666666'
+        />
         <ScrollView>
-          {filteredAssociados.length >= 1 && searchTerm.length >= 3 ? (
+          {filteredAssociados.length >= 1 && searchTerm.length >= 3 && (
             filteredAssociados.map((associado, index) => (
               <TouchableOpacity key={index} onPress={() => handleChangeSearchAssociado(associado)} style={styles.suggestName}>
                 <Text style={styles.textSuggestName}>{associado.nome}</Text>
               </TouchableOpacity>
             ))
-          ) : null}
+          )}
         </ScrollView>
       </View>
       {mostraAssociado && (

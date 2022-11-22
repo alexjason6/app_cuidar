@@ -15,7 +15,7 @@ import {Container, Text, View} from './styles';
 
 export function Modal({conectado}) {
   const {modal} = useContext(ModalContext);
-  const {tokenAssociadoHinova, buscaAssociado} = useContext(AuthContext);
+  const {refreshToken, buscaAssociado} = useContext(AuthContext);
   const [cpfCnpj, setCpfCnpj] = useState('');
   const [cpfCnpjExtracted, setCpfCnpjExtracted] = useState('');
 
@@ -40,8 +40,10 @@ export function Modal({conectado}) {
   };
 
   async function SetaDados() {
+    const token = await refreshToken();
+
     if (cpfCnpj.length >= 8) {
-      buscaAssociado(String(tokenAssociadoHinova), cpfCnpj);
+      buscaAssociado(String(token), cpfCnpj);
       await AsyncStorage.multiSet([
         ['@CUIDAR:cpfAssociado', cpfCnpj],
         ['@CUIDAR:cpfAssociadoExtracted', cpfCnpjExtracted],

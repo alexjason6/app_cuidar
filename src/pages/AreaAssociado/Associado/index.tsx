@@ -21,7 +21,7 @@ import CEPService from '../../../services/CEPService';
 import {Container, Content, Button, Text} from './style';
 
 const DadoAssociado: React.FC = () => {
-  const {user, loading, tokenAssociadoHinova, refreshAssociado} = useContext(AuthContext);
+  const {user, loading, refreshToken, refreshAssociado} = useContext(AuthContext);
   const [editable, setEditable] = useState(false);
   const [nome, setNome] = useState(user.nome);
   const [data_nascimento, setData_nascimento] = useState(moment(user.data_nascimento).format('DD/MM/YYYY'));
@@ -89,7 +89,9 @@ const DadoAssociado: React.FC = () => {
   }
 
   async function handleUpdateAssociado() {
-    await HinovaService.updateAssociado({token: tokenAssociadoHinova, body: {
+    const token = await refreshToken();
+
+    await HinovaService.updateAssociado({token: token, body: {
       codigo_associado: user.codigo_associado,
       nome,
       cpf,
