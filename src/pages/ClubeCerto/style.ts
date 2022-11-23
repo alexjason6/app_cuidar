@@ -1,212 +1,91 @@
-import {StyleSheet, Dimensions} from 'react-native';
+import styled, {css} from 'styled-components/native';
 
-const height = Dimensions.get('window').height;
-const width = Dimensions.get('window').width;
-const azul = '#0c71c3';
-const branco = '#FFFFFF';
-const cinzaEscuro = '#444444';
-const laranja = '#ff9800';
-const cinzaClaro = '#eeeeee';
+export const Container = styled.ScrollView`
+  background: ${({theme}) => theme.colors.grays.lighter};
+`;
 
-export default StyleSheet.create({
+export const Tips = styled.ScrollView`
+  height: 75px;
+`;
 
-  container: {
-    flex: 1,
-    backgroundColor: cinzaClaro,
-  },
+export const Tip = styled.TouchableOpacity`
+  height: 35px;
+  margin: 0px 4px;
+  margin-top: 20px;
+  background: ${({theme}) => theme.colors.white};
+  border-radius: 25px;
+  align-items: center;
+  justify-content: center;
 
-  containerLoading: {
-    height: 200,
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: cinzaClaro,
-  },
+  ${({active}) => active && css`
+    background: ${({theme}) => theme.colors.blues.main};
+  `};
+`;
 
-  fundoDesconto: {
-    backgroundColor: branco,
-    paddingHorizontal: 20,
-    paddingBottom: 50,
-  },
+export const View = styled.View`
 
-  titleDescontos: {
-    fontSize: 24,
-    color: azul,
-    marginTop: 30,
-    fontWeight: 'bold',
-  },
+  ${({localidade}) => localidade && css`
+    margin: 20px;
+    flex-direction: row;
+  `};
 
-  textoDescontos: {
-    color: cinzaEscuro,
-    marginTop: 30,
-  },
+  ${({loading}) => loading && css`
+    height: 200px;
+    margin: 20px;
+    align-items: center;
+    justify-content: center;
+  `};
 
-  scrollTips: {
-    height: 75,
-    marginTop: -30,
-    backgroundColor: cinzaClaro,
-  },
+  ${({divisor}) => divisor && css`
+    width: 2px;
+    height: 90%;
+    margin: 0px 10px;
+    background: ${({theme}) => theme.colors.oranges.main};
+  `};
+`;
 
-  stickCategories: {
-    height: 35,
-    marginHorizontal: 4,
-    marginTop: 20,
-    backgroundColor: branco,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
+export const TouchableOpacity = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
 
-  stickCategoriesActive: {
-    height: 35,
-    marginHorizontal: 4,
-    marginTop: 20,
-    backgroundColor: azul,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
+  ${({filter}) => filter && css`
+    width: 100%;
+    margin: 5px auto;
+    padding-right: 20px;
+    justify-content: flex-end;
+  `};
 
-  textStickCategories: {
-    marginHorizontal: 20,
-    marginVertical: 8,
-    color: laranja,
-    fontWeight: 'bold',
-  },
+  ${({store}) => store && css`
+    width: 94%;
+    height: 90px;
+    margin: 5px auto;
+    padding: 0px 10px;
+    border-radius: 4px;
+    background: ${({theme}) => theme.colors.white};
+    justify-content: flex-start;
+  `};
+`;
 
-  textStickCategoriesActive: {
-    marginHorizontal: 20,
-    marginVertical: 8,
-    color: branco,
-    fontWeight: 'bold',
-  },
+export const Text = styled.Text`
+  color: ${({theme}) => theme.colors.grays.main};
 
-  buscandoDescontos: {
-    marginTop: 20,
-    color: cinzaEscuro,
-  },
+  ${({tip}) => tip && css`
+    margin: 8px 20px;
+    color: ${({theme}) => theme.colors.oranges.main};
+    font-weight: bold;
+  `};
 
-  cardEstabelecimento: {
-    marginHorizontal: 20,
-    borderRadius: 4,
-    backgroundColor: branco,
-    height: 90,
-    width: width - 40,
-    marginVertical: 5,
-    paddingHorizontal: 10,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
+  ${({active}) => active && css`
+    color: ${({theme}) => theme.colors.white};
+  `};
 
-  imageParceiro: {
-    width: 70,
-    height: 70,
-  },
+  ${({storeName}) => storeName && css`
+    font-size: 15px;
+    font-weight: bold;
+  `};
+`;
 
-  imageParceiroDesconto: {
-    width: 100,
-    height: 100,
-    alignSelf: 'center'
-  },
-
-  divisor: {
-    height: '90%',
-    backgroundColor: laranja,
-    width: 2,
-    marginHorizontal: 10,
-  },
-
-  nomeParceiro: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: cinzaEscuro,
-    width: '60%',
-  },
-
-  filter: {
-    color: cinzaEscuro,
-  },
-
-  filtro: {
-    paddingRight: 20,
-    justifyContent: 'flex-end',
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-
-  localização: {
-    marginHorizontal: 20,
-    marginVertical: 20,
-    flexDirection: 'row'
-  },
-
-  icon: {
-    marginRight:20,
-  },
-
-  botaoDesconto: {
-    marginTop: 10,
-    marginBottom: 20,
-    backgroundColor: laranja,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 12,
-    borderRadius: 4
-  },
-
-  fundoDetalheDesconto: {
-    backgroundColor: branco,
-    paddingHorizontal: 20
-  },
-
-  titleDetalheDescontos: {
-    color: '#888888',
-    fontWeight: 'bold',
-    fontSize: 12
-  },
-
-  dadosDetalheDesconto: {
-    color: '#888888',
-    paddingHorizontal: 10,
-    marginBottom: 12
-  },
-
-  titleEstabelecimento: {
-    fontSize: 16,
-    color: azul,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
-    marginBottom: 15
-  },
-
-  descricaoEstabelecimento: {
-    paddingHorizontal: 10,
-    fontWeight: 'bold',
-    color: azul,
-    marginBottom: 20
-  },
-
-  titleRegras: {
-    color: cinzaEscuro,
-  },
-
-  titleEnderecos: {
-    color: cinzaEscuro,
-    marginVertical: 10
-  },
-
-  regrasEstabelecimento: {
-    paddingHorizontal: 10,
-    color: cinzaEscuro,
-    fontSize: 14,
-    marginVertical: 10
-  },
-
-  btnDesconto: {
-    color: branco,
-    fontSize: 14,
-    fontWeight: 'bold'
-  }
-});
+export const Image = styled.Image`
+  width: 70px;
+  height: 70px;
+`;

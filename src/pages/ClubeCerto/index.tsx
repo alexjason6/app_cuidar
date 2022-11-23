@@ -1,25 +1,25 @@
-import React, {useState, useContext, useEffect, useCallback} from "react"
+import React, {useState, useContext, useEffect} from "react"
 import {
-  View,
-  Text,
-  ScrollView,
   ActivityIndicator,
-  TouchableOpacity,
-  Image,
-  Modal,
-  SafeAreaView,
-  Linking,
 } from 'react-native';
-import AuthContext from "../../contexts/authContext";
-import styles from './style'
-import buscarClubeCerto from "../../services/apiClubeCerto";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {List} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Feather';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 
+import AuthContext from "../../contexts/authContext";
+import ModalContext from "../../contexts/modalContext";
+
+import ClubeCertoService from '../../services/ClubeCertoService';
+
+import ModalDesconto from './components/ModalDesconto';
+import Header from '../../components/Header';
+
+import {Container, Tips, Tip, View, Text, TouchableOpacity, Image} from './style';
+
 const ClubeCerto: React.FC = () => {
   const {user} = useContext(AuthContext);
+  const {modal, changeModal} = useContext(ModalContext);
   const [loading, setLoading] = useState(true);
   const [categoriasCCActive, setCategoriasCCActive] = useState(null);
   const [estabelecimentos, setEstabelecimentos] = useState();
@@ -239,39 +239,33 @@ const ClubeCerto: React.FC = () => {
   const [cidade, setCidade] = useState();
   const [expanded, setExpanded] = useState(false);
   const [expandedCity, setExpandedCity] = useState(false);
-
-  const [modal, setModal] = useState(false);
   const handlePress = () => setExpanded(!expanded);
   const handlePressCity = () => setExpandedCity(!expandedCity);
 
   async function getCity(uf) {
-    await buscarClubeCerto.get(`1/cidades.php?user=cuidar&token=acuidar%40clube19384&estado=${uf.Codigo}`)
+
+    await ClubeCertoService.getData(`/1/cidades.php?user=cuidar&token=acuidar%40clube19384&estado=${uf.Codigo}`)
     .then((response) => {
-      setCidade(response.data[0]);
-      setCidades(response.data);
-      const cities = JSON.stringify(response.data);
+      setCidade(response[0]);
+      setCidades(response);
+      const cities = JSON.stringify(response);
       AsyncStorage.setItem('@CUIDAR:cities', cities);
 
       const data = {
         codEstado: uf.Codigo,
-        codCidade: response.data[0].Codigo,
+        codCidade: response[0].Codigo,
       }
 
       setEstadoNome(uf.Estado);
-      setCidadeNome(response.data[0].Cidade);
+      setCidadeNome(response[0].Cidade);
       pegaEstabelecimentos(data);
     })
    }
 
-   useEffect(() => {
-    const [uf] = estados.filter((item) => user.estado === item.Sigla);
-     getCity(uf);
-  }, []);
-
   async function pegaEstabelecimentos(data:Object) {
-    await buscarClubeCerto.get(`2/estabelecimentos.php?user=cuidar&token=acuidar%40clube19384&estado=${data.codEstado}&cidade=${data.codCidade}`)
+    await ClubeCertoService.getData(`/2/estabelecimentos.php?user=cuidar&token=acuidar%40clube19384&estado=${data.codEstado}&cidade=${data.codCidade}`)
     .then((response) => {
-      setEstabelecimentos(response.data.Estabelecimentos);
+      setEstabelecimentos(response.Estabelecimentos);
       setLoading(false);
     })
   }
@@ -279,9 +273,10 @@ const ClubeCerto: React.FC = () => {
   async function buscaCidades(estadoCodigo) {
     setLoading(true);
     setEstado(estadoCodigo);
-    await buscarClubeCerto.get(`1/cidades.php?user=cuidar&token=acuidar%40clube19384&estado=${estadoCodigo}`)
+
+    await ClubeCertoService.getData(`/1/cidades.php?user=cuidar&token=acuidar%40clube19384&estado=${estadoCodigo}`)
     .then((response) => {
-      setCidades(response.data);
+      setCidades(response);
       setLoading(false);
     })
   }
@@ -289,9 +284,10 @@ const ClubeCerto: React.FC = () => {
   async function buscaEstabelecimentos(data:Object) {
     setCidade(data);
     setLoading(true);
-    await buscarClubeCerto.get(`2/estabelecimentos.php?user=cuidar&token=acuidar%40clube19384&estado=${estado}&cidade=${data}`)
+
+    await ClubeCertoService.getData(`/2/estabelecimentos.php?user=cuidar&token=acuidar%40clube19384&estado=${estado}&cidade=${data}`)
     .then((response) => {
-      setEstabelecimentos(response.data.Estabelecimentos);
+      setEstabelecimentos(response.Estabelecimentos);
       setLoading(false);
     })
   }
@@ -299,63 +295,55 @@ const ClubeCerto: React.FC = () => {
   async function buscaPorCategorias(categoria) {
     setCategoriasCCActive(categoria);
     setLoading(true);
-    await buscarClubeCerto.get(`2/estabelecimentos.php?user=cuidar&token=acuidar%40clube19384&estado=${estado}&cidade=${cidade.Codigo}&categoria=${categoria}`)
+
+    await ClubeCertoService.getData(`/2/estabelecimentos.php?user=cuidar&token=acuidar%40clube19384&estado=${estado}&cidade=${cidade?.Codigo}&categoria=${categoria}`)
     .then((response) => {
-      setEstabelecimentos(response.data.Estabelecimentos);
+      setEstabelecimentos(response.Estabelecimentos);
       setLoading(false);
     })
   }
 
   async function handleDetails(codEstabelecimento:String) {
-    await buscarClubeCerto.get(`2/estabelecimento_dados.php?user=cuidar&token=acuidar%40clube19384&estabelecimento=${codEstabelecimento}.json`, {
-      headers: {
-      'Content-Type': 'application/json',
-      }
-    })
+
+    await ClubeCertoService.getData(`/2/estabelecimento_dados.php?user=cuidar&token=acuidar%40clube19384&estabelecimento=${codEstabelecimento}`)
     .then((response) => {
-      setDadosEstabelecimento(response.data.Estabelecimento[0]);
-      setModal(true)
+      setDadosEstabelecimento(response.Estabelecimento[0]);
+      changeModal({
+        modalName: 'modalDesconto',
+        active: true,
+        device: 0,
+      })
     });
   }
 
+  useEffect(() => {
+    const [uf] = estados.filter((item) => user.estado === item.Sigla);
+    getCity(uf);
+  }, []);
+
   return (
-    <ScrollView>
-      <View style={styles.fundoDesconto}>
-        <Text style={styles.titleDescontos}>
-          A sua melhor experiência é com nosso clube de descontos.
-        </Text>
+    <Container>
+      <Header
+        whiteColor
+        title={'A sua melhor experiência é com nosso clube de descontos.'}
+        description={`Estabelecimentos com desconto em todo Brasil e na internet. Aqui você economiza sempre e pode sempre economizar mais.${'\n'}${'\n'}Veja abaixo os descontos, filtre por categorias, estado ou cidade. Use e abuse.`}
+      />
+      <Tips horizontal={true}>
+        {categorias.map((categoria) => (
+          <Tip
+            key={categoria.Codigo}
+            active={categoriasCCActive === categoria.Codigo}
+            onPress={() => buscaPorCategorias(categoria.Codigo)}
+          >
+            <Text active={categoriasCCActive === categoria.Codigo} tip>
+              {categoria.Nome}
+            </Text>
+          </Tip>
+        ))}
+      </Tips>
 
-        <Text style={styles.textoDescontos}>
-          Estabelecimentos com desconto em todo Brasil e na internet. Aqui você
-          economiza sempre e pode sempre economizar mais.
-        </Text>
-
-        <Text style={styles.textoDescontos}>
-          Veja abaixo os descontos, filtre por categorias, estado ou cidade. Use e abuse.
-        </Text>
-      </View>
-      <ScrollView horizontal={true} style={styles.scrollTips}>
-        {categorias.map((categoria) => {
-          return (
-            <TouchableOpacity
-              key={categoria.Codigo}
-              style={categoriasCCActive === categoria.Codigo ? styles.stickCategoriesActive : styles.stickCategories}
-              onPress={() => {
-                buscaPorCategorias(categoria.Codigo);
-              }}
-            >
-              <Text style={
-                categoriasCCActive === categoria.Codigo ? styles.textStickCategoriesActive :
-                styles.textStickCategories}>
-                  {categoria.Nome}
-              </Text>
-            </TouchableOpacity>
-          )
-        })}
-      </ScrollView>
-      <View>
-      <View style={styles.localização}>
-        <View style={styles.icon}>
+      <View localidade>
+        <View>
           <IconFA name="map-marker" size={25} color="#ff9800" />
         </View>
         <View>
@@ -363,129 +351,73 @@ const ClubeCerto: React.FC = () => {
           <Text>{cidadeNome}/{estadoNome}</Text>
         </View>
       </View>
-      <View>
-        <TouchableOpacity
-        style={styles.filtro}
-        onPress={() => setFiltro(!filtro)}>
-          <Text>Filtros</Text>
-          {!filtro ? <Icon name="chevron-down" size={20} color="#FF9800"/> : <Icon name="chevron-up" size={20} color="#FF9800"/>}
-        </TouchableOpacity>
-      </View>
-      { filtro ? (
+
+      <TouchableOpacity filter onPress={() => setFiltro(!filtro)}>
+        <Text>Filtros</Text>
+        <Icon name={!filtro ? "chevron-down" : "chevron-up"} size={20} color="#FF9800"/>
+      </TouchableOpacity>
+
+      {filtro && (
         <List.Section>
           <List.Accordion
             expanded={expanded}
             onPress={handlePress}
-            title="Selecione o Estado">
-            {estados.map((estado) => {
-              return (
-                <List.Item
-                  title={`${estado.Estado}`}
-                  key={estado.Codigo}
-                  onPress={() => {
-                    buscaCidades(estado.Codigo);
-                    setEstadoNome(estado.Estado);
-                    handlePress();
-                  }}
-                />
-              )
-            })
-            }
+            title="Selecione o Estado"
+          >
+            {estados.map((estado) => (
+              <List.Item
+                title={`${estado.Estado}`}
+                key={estado.Codigo}
+                onPress={() => {
+                  buscaCidades(estado.Codigo);
+                  setEstadoNome(estado.Estado);
+                  handlePress();
+                }}
+              />
+            ))}
           </List.Accordion>
           <List.Accordion
             expanded={expandedCity}
             onPress={handlePressCity}
             title="Selecione a Cidade"
           >
-            {cidades.map((cidade) => {
-              return (
-                <List.Item
-                  key={cidade.Codigo}
-                  title={`${cidade.Cidade}`}
-                  onPress={() => {
-                    handlePressCity();
-                    setCidadeNome(cidade.Cidade);
-                    buscaEstabelecimentos(cidade.Codigo);
-                    setFiltro(false);
-                  }}
-                />
-              )
-            })
-            }
-          </List.Accordion>
-      </List.Section> ) : null}
-
-        {loading ? (
-          <View style={styles.containerLoading}>
-            <ActivityIndicator color="#FF9800" />
-          </View>
-        ) : estabelecimentos ? (
-          estabelecimentos.map((item) => {
-            return (
-              <TouchableOpacity
-              key={item.Codigo}
-              style={styles.cardEstabelecimento}
-              onPress={() => handleDetails(item.Codigo)}>
-                <Image
-                  source={{uri:item.Marca}}
-                  style={styles.imageParceiro}
-                />
-                <View style={styles.divisor} />
-                <Text style={styles.nomeParceiro}>{item.Nome}</Text>
-              </TouchableOpacity>
-            )
-          })
-        ): <Text>Erro ao carregar conteúdo. Arraste a página para baixo para atualizar</Text>}
-      </View>
-      <Modal visible={modal} animationType='slide'>
-        <SafeAreaView>
-          <ScrollView style={styles.fundoDetalheDesconto}>
-            <TouchableOpacity onPress={() => setModal(false)}><Text>Fechar</Text></TouchableOpacity>
-            {dadosEstabelecimento ? (
-            <View>
-              <Image
-                source={{uri:dadosEstabelecimento.Marca}}
-                style={styles.imageParceiroDesconto}
+            {cidades.map((cidade) => (
+              <List.Item
+                key={cidade.Codigo}
+                title={`${cidade.Cidade}`}
+                onPress={() => {
+                  handlePressCity();
+                  setCidadeNome(cidade.Cidade);
+                  buscaEstabelecimentos(cidade.Codigo);
+                  setFiltro(false);
+                }}
               />
-              <Text style={styles.titleEstabelecimento}>{dadosEstabelecimento.Nome}</Text>
-              <Text style={styles.descricaoEstabelecimento}>
-                {dadosEstabelecimento.Beneficios.map((desconto, index) => {
-                  return (
-                    <View key={index}>
-                      <Text style={styles.descricaoEstabelecimento}>{desconto.desconto}</Text>
-                      <Text style={styles.regrasEstabelecimento}>Regra: {desconto.regra}{'\n'}{'\n'}</Text>
-                    </View>
-                  )
-                })}
-              </Text>
-              {dadosEstabelecimento.Linksite ?
-              <TouchableOpacity style={styles.botaoDesconto} onPress={() => {
-                Linking.openURL(dadosEstabelecimento.Linksite)
-              }}>
-                <Text style={styles.btnDesconto}>{dadosEstabelecimento.Linkdescricao}</Text>
-              </TouchableOpacity>
-              : null }
-              <Text style={styles.titleRegras}>
-                Regras:
-              </Text>
-              <Text style={styles.regrasEstabelecimento}>
-                {dadosEstabelecimento.Regras.replaceAll('<br/>','')}
-              </Text>
-              <Text style={styles.titleEnderecos}>Endereços:</Text>
-              {dadosEstabelecimento.Enderecos.length !== 0 ? (dadosEstabelecimento.Enderecos.map((item, index) => {
-                return (
-                  <View key={index}>
-                    <Text style={styles.titleDetalheDescontos}>{item.titulo}</Text>
-                    <Text style={styles.dadosDetalheDesconto}>{item.endereco} - {item.CidadeNome}</Text>
-                  </View>
-                )
-              })): null}
-            </View>
-            ): null}
-          </ScrollView>
-        </SafeAreaView>
-      </Modal>
-    </ScrollView>
+            ))}
+          </List.Accordion>
+        </List.Section>
+      )}
+
+      {loading && (
+        <View loading>
+          <ActivityIndicator color="#FF9800" />
+        </View>
+      )}
+
+      {estabelecimentos ? (
+        estabelecimentos.map((item) => (
+          <TouchableOpacity
+          store
+          key={item.Codigo}
+          onPress={() => handleDetails(item.Codigo)}>
+            <Image source={{uri:item.Marca}}/>
+            <View divisor />
+            <Text storeName>{item.Nome}</Text>
+          </TouchableOpacity>
+        ))) : <Text>Erro ao carregar conteúdo. Arraste a página para baixo para atualizar</Text>
+      }
+
+      {dadosEstabelecimento && <ModalDesconto visible={modal.modalName === 'modalDesconto' && modal.active} dadosEstabelecimento={dadosEstabelecimento} />}
+    </Container>
   )
 }
 

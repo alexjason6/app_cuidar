@@ -1,5 +1,5 @@
 import React from "react";
-import { Image } from "react-native";
+import { Image, Platform } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
 import {useNavigation} from '@react-navigation/native';
 
@@ -7,16 +7,16 @@ import { Container, Text, Interna, Button } from "./styles";
 
 export default function Card({description, icon, iconColor, admin, destaque, rastreamento, navigateTo, image}) {
   const navigation = useNavigation();
-  
+
   return (
     <Container admin={admin} destaque={destaque} rastreamento={rastreamento}>
       <Interna>
         <Button onPress={() => navigation.navigate(navigateTo)}>
-          {image ? 
-            <Image source={image} style={{ marginLeft: 40, width: 45, height: 45}} /> : 
+          {image ?
+            <Image source={image} style={Platform.OS === 'android' ? {marginLeft: 40, width: 35, height: 35} : { marginLeft: 40, width: 45, height: 45}} /> :
             <Icon
               name={icon}
-              size={40}
+              size={Platform.OS === 'android' ? 35 : 40}
               color={iconColor}
               style={{ marginLeft: 40, width: 50, height: 50}}
             />

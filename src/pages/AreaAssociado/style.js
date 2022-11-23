@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import styled, {css} from 'styled-components/native';
 
 export const Container = styled.SafeAreaView`
@@ -35,6 +36,7 @@ export const Text = styled.Text`
   ${({boletos}) => boletos && css`
     font-weight: bold;
     color: ${({theme}) => theme.colors.white};
+    margin-top: ${Platform.OS === 'ios' ? '0px' : '-4px'};
   `};
 
   ${({placaAtiva}) => placaAtiva && css`

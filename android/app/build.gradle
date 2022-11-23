@@ -1,7 +1,16 @@
-apply plugin: "com.android.application"
+
+plugins {
+  id "com.android.application"
+  id 'com.google.gms.google-services'
+}
 
 import com.android.build.OutputFile
 
+project.ext.vectoricons = [
+  iconFontNames: [ 'MaterialCommunityIcons.ttf', 'FontAwesome.ttf', 'FontAwesome5_Regular.ttf', 'Feather.ttf', 'MaterialIcons.ttf' ] // Name of the font files you want to copy
+]
+
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
  * and bundleReleaseJsAndAssets).
@@ -120,7 +129,9 @@ def useIntlJsc = true;
  */
 def enableHermes = project.ext.react.get("enableHermes", false);
 
+
 android {
+
     ndkVersion rootProject.ext.ndkVersion
 
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -197,7 +208,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     implementation "io.grpc:grpc-okhttp:1.32.2"
-    
+    implementation project(':react-native-vector-icons')
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
@@ -229,4 +240,3 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
-apply plugin: 'com.google.gms.google-services' // <- Add this line

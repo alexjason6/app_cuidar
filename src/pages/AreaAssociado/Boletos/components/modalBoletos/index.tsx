@@ -1,7 +1,8 @@
-import React, { useContext, useState } from "react";
-import { Modal, Share } from "react-native";
+import React, { useContext } from "react";
+import { Platform, Share } from "react-native";
 import { WebView } from 'react-native-webview';
 import Icon from "react-native-vector-icons/Feather";
+import { Pdf } from 'react-native-pdf-light';
 
 import ModalContext from '../../../../../contexts/modalContext';
 
@@ -25,15 +26,15 @@ export default function ModalBoletos({linkBoleto}) {
 
   return (
     <Container visible={modal.modalName === 'modalBoleto' && modal.active === true} presentationStyle="formSheet" >
-        <Header closeButton={false} modalBoleto>
-          <Content>
-            <Button onPress={compartilha}>
-              <Icon name={'share'} size={30} color={'#ffffff'} />
-            </Button>
-            <CloseModal />
-          </Content>
-        </Header>
-        <WebView allowFileAccessFromFileURLs source={{uri:linkBoleto}} startInLoadingState={true} renderLoading={Loading} />
+      <Header closeButton={false} modalBoleto>
+        <Content>
+          <Button onPress={compartilha}>
+            <Icon name={'share'} size={30} color={'#ffffff'} />
+          </Button>
+          <CloseModal />
+        </Content>
+      </Header>
+      {Platform.OS === 'ios' ? <WebView allowFileAccessFromFileURLs source={{uri:linkBoleto}} startInLoadingState={true} renderLoading={Loading} /> : <Pdf source={linkBoleto} />}
     </Container>
   )
 }

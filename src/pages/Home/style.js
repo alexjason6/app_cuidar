@@ -13,19 +13,19 @@ export const Text = styled.Text`
 
   ${({saudacao}) => saudacao && css`
     font-size: 40px;
-    font-weight: ${Platform.OS === 'ios' ? '200' : '100'};
     font-family: ${Platform.OS === 'ios' ? 'System' : 'Roboto-Light'};
     margin-bottom: 50px;
+    margin-left: ${Platform.OS === 'android' && 40}px;
   `};
 
   ${({associado}) => associado && css`
-    font-weight: ${Platform.OS === 'ios' ? '700' : bold};
+    font-weight: bold;
     font-size: 16px;
   `};
 
   ${({visitante}) => visitante && css`
     color: ${({theme}) => theme.colors.grays.main};
-    font-weight: ${Platform.OS === 'ios' ? '700' : bold};
+    font-weight: bold};
     font-size: 16px;
   `};
 `;

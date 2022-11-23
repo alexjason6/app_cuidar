@@ -8,6 +8,10 @@ export const Container = styled.View`
   ${({modalBoleto}) => modalBoleto && css`
     background: ${({theme}) => theme.colors.alert.main};
   `};
+
+  ${({whiteColor}) => whiteColor && css`
+    background: ${({theme}) => theme.colors.white};
+  `};
 `;
 
 export const Text = styled.Text`
@@ -23,5 +27,9 @@ export const Text = styled.Text`
   ${({description}) => description && css`
     font-size: 16px;
     padding: 0px 20px;
+  `};
+
+  ${({whiteColor}) => whiteColor && css`
+  color: ${({theme}) => theme.colors.blues.main};
   `};
 `;

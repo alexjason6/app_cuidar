@@ -1,4 +1,5 @@
 import styled, {css} from "styled-components/native";
+import { Platform } from "react-native";
 
 export const Input = styled.TextInput`
   width: 80%;
@@ -22,7 +23,7 @@ export const Input = styled.TextInput`
 
   ${({dados}) => dados && css`
     width: 100%;
-    padding: 20px 15px;
+    padding: ${Platform.OS === 'ios' ? '20px 15px' : '0px 15px'};
     color: ${({theme}) => theme.colors.grays.main};
     font-weight: bold;
     text-align: left;

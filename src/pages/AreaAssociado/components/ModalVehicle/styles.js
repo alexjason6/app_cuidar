@@ -20,10 +20,10 @@ export const Dados = styled.View`
 `;
 
 export const Info = styled.View`
-  width: 100px;
-  height: 100px;
+  width: 95px;
+  height: 95px;
   padding: 10px;
-  margin: 9px;
+  margin: 2px;
   border-radius: 4px;
   border-width: 1px;
   border-color: ${({theme}) => theme.colors.alert.light};
@@ -32,10 +32,10 @@ export const Info = styled.View`
 `;
 
 export const Produtos = styled.View`
-  width: 44.3%;
+  width: 46%;
   height: 150px;
   padding: 10px;
-  margin: 10px;
+  margin: 5px;
   border-radius: 4px;
   background: ${({theme}) => theme.colors.greens.light};
   justify-content: center;
@@ -47,6 +47,7 @@ export const Text = styled.Text`
   text-align: center;
 
   ${({title}) => title && css`
+    width: 100%;
     font-size: 18px;
     text-transform: uppercase;
     margin: 15px 0px;

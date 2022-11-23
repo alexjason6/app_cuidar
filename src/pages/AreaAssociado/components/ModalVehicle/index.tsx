@@ -17,9 +17,9 @@ export default function ModalVehicle({produtos, veiculoData}) {
   return (
     <Container visible={modal.modalName === 'vehiclesDetails' && modal.active === true} animationType="slide" presentationStyle="formSheet" >
       <Content>
-        <Header title={veiculoData.modelo} description={'Segue abaixo todos os detalhes do seu veículo cadastrado aqui na CUIDAR.'} closeButton />  
+        <Header title={veiculoData.modelo} description={'Segue abaixo todos os detalhes do seu veículo cadastrado aqui na CUIDAR.'} closeButton />
         <Dados>
-          <Text title>Informações do veículo</Text>    
+          <Text title>Informações do veículo</Text>
           <Info>
             <IconMCI name={'car'} size={30} color={'#f5d787'} />
             <Text labelInfo>Placa:</Text>
@@ -85,7 +85,7 @@ export default function ModalVehicle({produtos, veiculoData}) {
           </Info>
 
         </Dados>
-        <Dados>
+        <Dados produtos>
           <Text title>Produtos contratados</Text>
           {returnAtivos.sort((a: {descricao: string}, b: {descricao: string}) => a.descricao > b.descricao ? 1 : -1).map((produto: {descricao: string, valor: number}, key: number) => (
             <Produtos key={key}>
@@ -102,5 +102,5 @@ export default function ModalVehicle({produtos, veiculoData}) {
         </Dados>
       </Content>
     </Container>
-  ); 
+  );
 }

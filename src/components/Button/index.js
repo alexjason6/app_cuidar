@@ -82,4 +82,11 @@ export const Button = styled.TouchableOpacity`
     height: 100px;
     background: ${({theme}) => theme.colors.blues.main};
   `};
+
+  ${({desconto}) => desconto && css`
+    width: 100%;
+    margin-top: 10px;
+    background: ${({theme}) => theme.colors.oranges.main};
+    align-self: center;
+  `};
 `;
