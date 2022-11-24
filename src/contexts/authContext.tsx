@@ -503,7 +503,6 @@ export const AuthProvider: React.FC = ({children}) => {
     refreshAppState();
   }, []);
 
-
   return (
     <AuthContext.Provider
       value={{

@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { Platform, Share } from "react-native";
 import { WebView } from 'react-native-webview';
 import Icon from "react-native-vector-icons/Feather";
-import { Pdf } from 'react-native-pdf-light';
 
 import ModalContext from '../../../../../contexts/modalContext';
 
@@ -34,7 +33,8 @@ export default function ModalBoletos({linkBoleto}) {
           <CloseModal />
         </Content>
       </Header>
-      {Platform.OS === 'ios' ? <WebView allowFileAccessFromFileURLs source={{uri:linkBoleto}} startInLoadingState={true} renderLoading={Loading} /> : <Pdf source={linkBoleto} />}
+
+      <WebView allowFileAccessFromFileURLs source={{uri: Platform.OS === 'ios' ? linkBoleto : `http://docs.google.com/gview?embedded=true&url=${linkBoleto}`}} startInLoadingState={true} renderLoading={Loading} />
     </Container>
   )
 }

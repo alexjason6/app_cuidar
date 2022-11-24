@@ -1,18 +1,13 @@
-import React, { Children, useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment from 'moment';
 import IconeMC from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconIon from 'react-native-vector-icons/Ionicons';
 
-import ModalContext from "../../../../contexts/modalContext";
-
 import SmartService from "../../../../services/SmartService";
-
-import { Button } from '../../../../components/Button';
 
 import {Container, View, Text } from './styles'
 
-export default function Card({device, children, equipamento}) {
-  const { changeModal } = useContext(ModalContext);
+export default function Card({device, children}) {
   const [endereco, setEndereco] = useState('');
 
   async function getAddress() {
@@ -35,18 +30,11 @@ export default function Card({device, children, equipamento}) {
         <Text placa>
           <IconeMC name={'car-connected'} size={20} /> {device.name}
         </Text>
-        {device.online === 'online' ? (
-          <Text ligado>
-            <IconeMC name="engine" size={20} color={'#0c71c3'} />{' '}
-            Ligado
-          </Text>
-        ) : (
-          <Text desligado>
-            <IconeMC name="engine" size={20} color={'#cccccc'} />
-            {'  '}
-            Desligado
-          </Text>
-        )}
+
+        <Text ligado={device.online === 'online'} desligado={device.online !== 'online'}>
+          <IconeMC name="engine" size={20} color={device.online === 'online' ? '#0c71c3' : '#cccccc'} />{device.online === 'online' ? ' Ligado' : ' Desligado'}
+        </Text>
+
       </View>
       <View speed>
         <Text speed>
@@ -61,7 +49,7 @@ export default function Card({device, children, equipamento}) {
       <Text address>
         {endereco.replaceAll(',', ', ')}
       </Text>
-      {children}   
+      {children}
     </Container>
   )
 }

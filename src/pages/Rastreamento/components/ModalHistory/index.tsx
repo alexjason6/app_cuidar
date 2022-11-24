@@ -51,19 +51,17 @@ export default function ModalHistory({ visible, historico }) {
 
   async function getFinalAddress() {
     await SmartService.getAddress({latitude: viagemFinal.latitude, longitude: viagemFinal.longitude})
-    .then((response) => setEnderecoFinal(response));
+    .then((response) => setEnderecoFinal(response))
   }
 
   async function getHistory(direction: string) {
     setLoading(true);
-    setViagem(0);
-    setCurrentData(direction === 'dayAfter' ? currentData + 1 : currentData - 1)
     const newData = direction === 'dayAfter' ? currentData + 1 : currentData - 1;
+    setCurrentData(newData);
 
     await SmartService.getHistory({token: String(tokenAssociadoGPS), id: devices[modal.device].id, dataSelected: data[newData].data})
-    .then((response) => {
-      setHistory(response.items)})
-    .finally(()=> setLoading(false));
+    .then((response) => setHistory(response.items))
+    .finally(() => setViagem(0))
   }
 
   useEffect(() => {

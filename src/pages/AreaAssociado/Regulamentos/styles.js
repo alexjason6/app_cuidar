@@ -5,6 +5,7 @@ export const Container = styled.SafeAreaView`
 `;
 
 export const Content = styled.ScrollView`
+  width: 100%;
   height: 100%;
   background: transparent;
 `;
@@ -17,14 +18,15 @@ export const RegulamentosView = styled.View`
 `;
 
 export const Regulamento = styled.TouchableOpacity`
-  width: 180px;
+  width: 45%;
   height: 180px;
   padding: 10px;
-  margin: 10px 13px;
+  margin: 8px 8px;
   background: ${({theme}) => theme.colors.white};
   align-items: center;
   justify-content: center;
   border-radius: 4px;
+  align-self: center;
 `;
 
 export const Text = styled.Text`

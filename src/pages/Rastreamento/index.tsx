@@ -59,7 +59,7 @@ export const Rastreamento: React.FC = () => {
     wait().then(() => setRefreshing(false));
   }, [getDevices]);
 
-  async function openModal(index: number) {
+  function openModal(index: number) {
     setEquipamento(index);
     changeModal({modalName: 'modalMap', active: true, device: index})
   }
@@ -96,7 +96,7 @@ export const Rastreamento: React.FC = () => {
           description={' O mapa é atualizado a cada minuto e caso necessite de uma atualização mais rápida, puxe a página para baixo até ver o indicador de carregamento.'}
         />
         {devices.map((device, index) => (
-          <Card device={device} equipamento={index} key={index}>
+          <Card device={device} key={index}>
             <View Buttons>
               <Button
                 mapView

@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   TextInput,
   Alert,
+  Platform,
 } from 'react-native';
 
 import Card from './components/Card/Card';
@@ -26,9 +27,9 @@ export default function Admin() {
   const [associado, setAssociado] = useState([]);
   const [mostraAssociado, setMostraAssociado] = useState(false);
 
-  function handleChangeSearchTerm(event) {
+  function handleChangeSearchTerm(event: string) {
     setMostraAssociado(false);
-    setSearchTerm(event);
+    setSearchTerm(Platform.OS === 'ios' ? event.toUpperCase() : event);
   }
 
   async function handleChangeSearchAssociado(associado) {
@@ -54,7 +55,8 @@ export default function Admin() {
         <TextInput
           style={styles.inputSearch}
           onChangeText={handleChangeSearchTerm}
-          value={searchTerm.toUpperCase()}
+          value={searchTerm}
+          autoCorrect={true}
           placeholder='Digite o nome do Associado'
           placeholderTextColor='#666666'
         />
