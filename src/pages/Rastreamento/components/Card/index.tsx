@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import {Platform} from 'react-native';
 import moment from 'moment';
 import IconeMC from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconIon from 'react-native-vector-icons/Ionicons';
@@ -47,7 +48,7 @@ export default function Card({device, children}) {
         </Text>
       </View>
       <Text address>
-        {endereco.replaceAll(',', ', ')}
+        {Platform.OS === 'ios' ? endereco.replaceAll(',', ', ') : endereco}
       </Text>
       {children}
     </Container>

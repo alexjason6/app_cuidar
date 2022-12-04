@@ -2,6 +2,7 @@ import React from 'react';
 import {
   SafeAreaView,
   Linking,
+  Platform,
 } from 'react-native';
 
 import FechaModal from  '../../../../components/FechaModal';
@@ -33,9 +34,10 @@ export default function ModalDesconto({visible, dadosEstabelecimento}) {
                 <Text btnDesconto>{dadosEstabelecimento.Linkdescricao}</Text>
               </Button>
             }
-            <Text regrasEstabelecimento>Regras: {dadosEstabelecimento.Regras.replaceAll('<br/>','')}</Text>
+            <Text regrasEstabelecimento>Regras: {Platform.OS === 'ios' ? dadosEstabelecimento.Regras.replaceAll('<br/>','') : dadosEstabelecimento.Regras}</Text>
 
            {dadosEstabelecimento?.Enderecos.length !== 0 && <Text titleEnderecos>Endereços:</Text>}
+
 
             {dadosEstabelecimento?.Enderecos.length !== 0 && (dadosEstabelecimento.Enderecos.map((item, index) => (
               <View key={index}>

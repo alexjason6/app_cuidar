@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services' // <- Add this line
+
 
 import com.android.build.OutputFile
 
@@ -206,8 +206,9 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     implementation "io.grpc:grpc-okhttp:1.32.2"
     implementation project(':react-native-vector-icons')
+    implementation "androidx.work:work-runtime:2.7.1"
 
-    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
+  debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }
 
@@ -237,3 +238,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply plugin: 'com.google.gms.google-services' // <- Add this line

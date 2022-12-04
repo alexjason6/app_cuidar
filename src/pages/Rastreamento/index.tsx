@@ -114,8 +114,8 @@ export const Rastreamento: React.FC = () => {
           </Card>
         ))}
       </Content>
-      <ModalMap visible={modal.modalName === 'modalMap' && modal.active === true ? true : false} />
-      <ModalHistory visible={modal.modalName === 'modalHistory' && modal.active === true ? true : false} historico={deviceHistory} />
+      <ModalMap visible={modal.modalName === 'modalMap' && modal.active === true} />
+      <ModalHistory visible={modal.modalName === 'modalHistory' && modal.active === true} historico={deviceHistory} />
     </Container>
   );
 };

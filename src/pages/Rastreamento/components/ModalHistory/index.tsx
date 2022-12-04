@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react"
-import { Dimensions } from "react-native"
+import { Dimensions, Platform } from "react-native"
 import 'moment/locale/pt-br';
 import moment from 'moment';
 import MapView, {Marker, PROVIDER_GOOGLE, Polyline} from 'react-native-maps';
@@ -140,8 +140,13 @@ export default function ModalHistory({ visible, historico }) {
       </View>
 
       <View infos>
-        <Text label>Origem: {viagemInicial.time} - <Text address>{enderecoInicial.replaceAll(',', ', ')}.</Text></Text>
-        <Text label>Destino: {viagemFinal.time} - <Text address>{enderecoFinal.replaceAll(',', ', ')}.</Text></Text>
+        {enderecoInicial ? (
+          <>
+            <Text label>Origem: {viagemInicial.time} - <Text address>{Platform.OS === 'ios' ? enderecoInicial.replaceAll(',', ', ') : enderecoInicial}.</Text></Text>
+            <Text label>Destino: {viagemFinal.time} - <Text address>{Platform.OS === 'ios' ? enderecoFinal.replaceAll(',', ', ') : enderecoFinal}.</Text></Text>
+        </>) :
+          <Text>Sem histórico de viagem</Text>
+        }
       </View>
     </Modal>
   )

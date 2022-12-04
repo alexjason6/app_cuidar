@@ -1,4 +1,5 @@
 import React from "react";
+import { Platform } from 'react-native';
 import IconIon from 'react-native-vector-icons/Ionicons';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconeMC from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -27,7 +28,7 @@ export default function Infos({deviceName, colorIconDevice, ignition, colorIconI
       </View>
       <View address>
         <IconEntypo name="address" size={20} color={'#cccccc'} />
-        <Text address> {address.replaceAll(',', ', ')}.</Text>
+        <Text address> {Platform.OS === 'ios' ? address.replaceAll(',', ', ') : address}.</Text>
       </View>
       <Text refresh>
         Atualizado {refreshAt}.
