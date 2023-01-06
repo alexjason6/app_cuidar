@@ -50,14 +50,16 @@ export const Button = styled.TouchableOpacity`
   `};
 
   ${({mapView}) => mapView && css`
-    width: 150px;
+    width: 130px;
     height: 40px;
     background: ${({theme}) => theme.colors.oranges.main};
   `};
 
   ${({historyView}) => historyView && css`
-    width: 150px;
+    width: 130px;
     height: 40px;
+    border-width: 1px;
+    border-radius: 4px;
     border-color: ${({theme}) => theme.colors.grays.disabled};
   `};
 

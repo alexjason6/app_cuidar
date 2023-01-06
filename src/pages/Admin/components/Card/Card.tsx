@@ -106,6 +106,7 @@ export default function Card({props}) {
     await refreshVeiculo();
   }
 
+
   const copyToClipboard = (index: string) => {
     const copy = boletos[index].linha_digitavel;
     Clipboard.setString(copy);

@@ -151,34 +151,26 @@ export const TrackProvider: React.FC = ({children}) => {
   }, []);
 
   async function loginSmart() {
-    await SmartService.signIn(user.email)
-    .then((response) => {
-      if (response.status === 1) {
-        setTokenAssociadoGPS(response.user_api_hash);
-      }
-    })
-    .catch(async (response) => {
-      if (response.status !== 1) {
-        await SmartService.signIn(user.cpf)
-        .then((response) => {
-          if (response.status === 1) {
-            setTokenAssociadoGPS(response.user_api_hash);
-          } else {
-            setError(true);
-          }
-        })
-      }
-    });
+    const response  = await SmartService.signIn(user.email);
+
+    if (response.status === 1) {
+      setTokenAssociadoGPS(response.user_api_hash);
+    } else {
+      await SmartService.signIn(user.cpf)
+      .then((response) => {
+        if (response.status === 1) {
+          setTokenAssociadoGPS(response.user_api_hash);
+        } else {
+          setError(true);
+        }
+      })
+    }
   }
 
   async function getDevices() {
     await SmartService.getDevice(tokenAssociadoGPS)
     .then((response) => {
-      if (response.length === 0) {
-        setError(true);
-      }
-
-      if (response.status === 0) {
+      if (response.length === 0 || response.status === 0) {
         setError(true);
       }
 

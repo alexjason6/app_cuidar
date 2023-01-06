@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useLayoutEffect,} from 'react';
+import React, {useContext, useEffect, useLayoutEffect, useState,} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import AuthContext from '../../contexts/authContext';
@@ -11,11 +11,20 @@ import Indicacao from './components/Indicacao';
 import {Container, Content} from './style';
 
 const Dashboard: React.FC = () => {
-  const {user, loading} = useContext(AuthContext);
+  const {user, loading, ativos, inativos, pendentes, inadimplentes, veiculosAtivos, veiculosInativos, veiculosPendentes, veiculosInadimplentes} = useContext(AuthContext);
   const {loginSmart} = useContext(TrackContext);
+  const [error, setError] = useState(true);
+
+  function verificaError() {
+    if (ativos && inativos && inadimplentes && pendentes && veiculosAtivos && veiculosInativos && veiculosPendentes && veiculosInadimplentes) {
+      setError(false);
+    }
+  }
 
   useLayoutEffect(() => {
-  loginSmart();
+    if (user) {
+      loginSmart();
+    }
   }, []);
 
   async function setaUser() {
@@ -30,6 +39,10 @@ const Dashboard: React.FC = () => {
     setaUser();
   }, []);
 
+  useEffect(() => {
+    verificaError();
+  }, [ativos, inativos, inadimplentes, pendentes, veiculosAtivos, veiculosInativos, veiculosPendentes, veiculosInadimplentes]);
+
   if (loading) {
     <Loading />
   }
@@ -37,7 +50,7 @@ const Dashboard: React.FC = () => {
   return (
     <Container>
       <Content>
-        {user.cpf === '07010305692' && (
+        {user.cpf === '07010305692' && !error && (
           <Card
             admin
             description={`Olá Alex!${'\n'}Acesse aqui a área administrativa.`}

@@ -198,6 +198,10 @@ interface AuthContextData {
     telefone_comercial: string,
     tipo_pessoa: string,
   }];
+  veiculosAtivos: [];
+  veiculosInativos: [];
+  veiculosPendentes: [];
+  veiculosInadimplentes: [];
   horaToken: string;
   accessData: {
     login: string,
@@ -260,6 +264,10 @@ export const AuthProvider: React.FC = ({children}) => {
   const [inativos, setInativos] = useState();
   const [pendentes, setPendentes] = useState();
   const [inadimplentes, setInadimplentes] = useState();
+  const [veiculosAtivos, setVeiculosAtivos] = useState();
+  const [veiculosInativos, setVeiculosInativos] = useState();
+  const [veiculosPendentes, setVeiculosPendentes] = useState();
+  const [veiculosInadimplentes, setVeiculosInadimplentes] = useState();
   const [horaToken, setHoraToken] = useState('');
   const [accessData, setAccessData] = useState({
     login: '',
@@ -326,42 +334,63 @@ export const AuthProvider: React.FC = ({children}) => {
 
   async function getAtivos(accessData: { token: string, cpfAdmin: string }) {
     setLoading(true);
-    if (cpfFormat(accessData.cpfAdmin) === '070.103.056-92') {
 
-      await HinovaService.getAssociados({ codigo_situacao: 1, token: accessData.token })
-      .then((response) => setAtivos(response.associados))
-      .catch(() => Alert.alert('Atenção', 'Não foi possível carregar os itens ativos'));
+    if (cpfFormat(accessData.cpfAdmin) === '070.103.056-92') {
+      try {
+        const associados = await HinovaService.getAssociados({ codigo_situacao: 1, token: accessData.token });
+        const veiculos = await HinovaService.getVehicles({ codigo_situacao: 1, token: accessData.token });
+
+        setAtivos(associados.associados);
+        setVeiculosAtivos(veiculos.veiculos);
+      } catch {
+        Alert.alert('Atenção', 'Não foi possível carregar os itens ativos.')
+      }
+
       getInativos({token: accessData.token, cpfCnpj: accessData.cpfAdmin});
     }
   };
 
   async function getInativos(accessData: {token: string, cpfCnpj: string}) {
 
-    await HinovaService.getAssociados({ codigo_situacao: 2, token: accessData.token })
-    .then((response) => {
-      setInativos(response.associados);
-    })
-    .catch(() => Alert.alert('Atenção', 'Não foi possível buscar os itens inativos'));
+    try {
+      const associados = await HinovaService.getAssociados({ codigo_situacao: 2, token: accessData.token });
+      const veiculos = await HinovaService.getVehicles({ codigo_situacao: 2, token: accessData.token });
+
+      setInativos(associados.associados);
+      setVeiculosInativos(veiculos.veiculos);
+    } catch {
+      Alert.alert('Atenção', 'Não foi possível carregar os itens inativos.')
+    }
+
     getPendentes({token: accessData.token, cpfCnpj: accessData.cpfCnpj});
   }
 
   async function getPendentes(accessData: {token: string, cpfCnpj: string}) {
 
-    await HinovaService.getAssociados({ codigo_situacao: 3, token: accessData.token })
-    .then((response) => {
-      setPendentes(response.associados);
-    })
-    .catch(() => Alert.alert('Atenção', 'Não foi possível buscar os itens inativos'));
+    try {
+      const associados = await HinovaService.getAssociados({ codigo_situacao: 3, token: accessData.token });
+      const veiculos = await HinovaService.getVehicles({ codigo_situacao: 3, token: accessData.token });
+
+      setPendentes(associados.associados);
+      setVeiculosPendentes(veiculos.veiculos);
+    } catch {
+      Alert.alert('Atenção', 'Não foi possível carregar os itens pendentes.')
+    }
+
     getInadimplentes({token: accessData.token, cpfCnpj: accessData.cpfCnpj});
   }
 
   async function getInadimplentes(accessData: {token: string, cpfCnpj: string}) {
 
-    await HinovaService.getAssociados({ codigo_situacao: 4, token: accessData.token })
-    .then((response) => {
-      setInadimplentes(response.associados);
-    })
-    .catch(() => Alert.alert('Atenção', 'Não foi possível buscar os itens inadimplentes'));
+    try {
+      const associados = await HinovaService.getAssociados({ codigo_situacao: 4, token: accessData.token });
+      const veiculos = await HinovaService.getVehicles({ codigo_situacao: 4, token: accessData.token });
+
+      setInadimplentes(associados.associados);
+      setVeiculosInadimplentes(veiculos.veiculos);
+    } catch {
+      Alert.alert('Atenção', 'Não foi possível carregar os itens inadimplentes.')
+    }
 
     buscaBoletoVencimento({token: accessData.token, cpfCnpj: accessData.cpfCnpj, userResponse: user});
   }
@@ -453,9 +482,7 @@ export const AuthProvider: React.FC = ({children}) => {
     await HinovaService.getDataVencimento({ token: accessData.token, body })
     .then((response) => {
       const [boleto] = response;
-      if (user) {
-        sendAssociadoData({boleto, user: accessData.userResponse});
-      }
+      sendAssociadoData({boleto, user: accessData.userResponse});
     })
     .catch(() => console.log('error envio dados firestore'));
     setLoading(false);
@@ -517,6 +544,10 @@ export const AuthProvider: React.FC = ({children}) => {
         inativos,
         inadimplentes,
         pendentes,
+        veiculosAtivos,
+        veiculosInativos,
+        veiculosPendentes,
+        veiculosInadimplentes,
         horaToken,
         accessData,
         logaHinova,

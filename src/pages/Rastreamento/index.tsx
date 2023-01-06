@@ -99,16 +99,16 @@ export const Rastreamento: React.FC = () => {
           <Card device={device} key={index}>
             <View Buttons>
               <Button
-                mapView
-                onPress={() => openModal(index)}
-              >
-                <Text mapa>Mapa</Text>
-              </Button>
-              <Button
                 historyView
                 onPress={() => getHistory(index)}
               >
                 <Text historico>Histórico</Text>
+              </Button>
+              <Button
+                mapView
+                onPress={() => openModal(index)}
+              >
+                <Text mapa>Mapa</Text>
               </Button>
             </View>
           </Card>

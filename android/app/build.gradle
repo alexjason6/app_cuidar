@@ -137,8 +137,8 @@ android {
         applicationId "br.com.acuidar.v01"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 20
-        versionName "2.3.1"
+        versionCode 27
+        versionName "2.3.19"
         vectorDrawables.useSupportLibrary = true
     }
     splits {

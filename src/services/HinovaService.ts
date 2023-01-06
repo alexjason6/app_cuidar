@@ -39,6 +39,14 @@ class HinovaService {
     return this.httpClient.get(`/buscar/boleto/${data.nossoNumero}`, {token: data.token});
   }
 
+  async createBoleto(data: {token: string, body: {}}) {
+    return this.httpClient.post('/boleto/cadastrar', {token: data.token, body: data.body});
+  }
+
+  async getVehicles(data: {codigo_situacao: number, token: string}) {
+    return this.httpClient.post('/listar/veiculo/', {token: data.token, body: {codigo_situacao: data.codigo_situacao}});
+  }
+
   async getVehicle(data: {token: string, placa: string}) {
     return this.httpClient.get(`/veiculo/buscar/${data.placa}`, {token: data.token});
   }
